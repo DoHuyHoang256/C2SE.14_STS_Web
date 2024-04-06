@@ -35,8 +35,6 @@ const Login = () => {
 
   const onError = () => {
     console.log('Google Login Failed');
-    // Xử lý lỗi đăng nhập Google ở đây nếu cần
-    
   };
 
   return (
