@@ -1,32 +1,26 @@
-import React, { useContext, useState } from "react";
+import React, { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-    faCalendarAlt,
-    faChevronDown,
-    faAddressBook,
-    faRightFromBracket,
-    faUser,
-    faBarcode,
-    faPeopleRoof,
-} from "@fortawesome/free-solid-svg-icons";
+import { faUser, faBarcode, faPeopleRoof, faAddressBook, faRightFromBracket, faChevronDown } from "@fortawesome/free-solid-svg-icons";
 
 const Sidebar = () => {
-    const isPetOwner = true;
     const [dropdownStates, setDropdownStates] = useState({
         userDropdown: false,
         petDropdown: false,
-        contactDropdown: false, StatisticsDropdown: false,
-        dateDropdown: false,
-        accoutDropdown: false,
+        contactDropdown: false,
+        accountDropdown: false,
+        statisticDropdown: false // Thêm trạng thái cho dropdown "Thống kê"
     });
 
     const toggleDropdown = (dropdownName) => {
-        const updatedDropdownStates = { ...dropdownStates };
-        Object.keys(updatedDropdownStates).forEach((key) => {
-            updatedDropdownStates[key] = key === dropdownName ? !updatedDropdownStates[key] : false;
-        });
-        setDropdownStates(updatedDropdownStates);
+        setDropdownStates(prevState => ({
+            ...prevState,
+            [dropdownName]: !prevState[dropdownName]
+        }));
+    };
+
+    const handleSidebarClick = (event) => {
+        event.stopPropagation();
     };
 
     const router = useLocation();
@@ -36,6 +30,7 @@ const Sidebar = () => {
             id="sidebar-multi-level-sidebar"
             className="top-0 left-0 z-40 w-74 h-screen transition-transform -translate-x-full drop-shadow-lg sm:translate-x-0"
             aria-label="Sidebar"
+            onClick={handleSidebarClick}
         >
             <div className="h-full px-4 py-4 overflow-y-auto bg-white border-r-2 border-r-gray-200 rounded-2xl">
                 <div className="flex items-center space-x-2 mb-4">
@@ -69,7 +64,7 @@ const Sidebar = () => {
                                 </Link>
                             </li>
                             <li>
-                                <Link to="/profile/change-password" className={`${router.pathname === "/profile/change-password" ? "text-primaryColor" : "text-gray-500"} flex items-center w-full p-2 text-gray-500 transition duration-75 rounded-lg pl-11 group hover:bg-gray-100`}>
+                                <Link to="/forgot-password" className={`${router.pathname === "/profile/change-password" ? "text-primaryColor" : "text-gray-500"} flex items-center w-full p-2 text-gray-500 transition duration-75 rounded-lg pl-11 group hover:bg-gray-100`}>
                                     Đổi mật khẩu
                                 </Link>
                             </li>
@@ -79,15 +74,15 @@ const Sidebar = () => {
                     <li>
                         <button
                             className="flex items-center w-full p-2 text-base text-gray-900 transition duration-75 rounded-lg group hover:bg-gray-100"
-                            onClick={() => toggleDropdown("StatisticsDropdown")}
+                            onClick={() => toggleDropdown("statisticDropdown")}
                         >
                             <FontAwesomeIcon icon={faBarcode} />
                             <span className="flex-1 ml-3 text-left whitespace-nowrap">Thống kê</span>
                             <FontAwesomeIcon icon={faChevronDown} />
                         </button>
-                        <ul className={`${dropdownStates.StatisticsDropdown || router.pathname.includes("/pet") ? "block" : "hidden"}`}>
+                        <ul className={`${dropdownStates.statisticDropdown || router.pathname.includes("/statistical") ? "block" : "hidden"}`}>
                             <li>
-                                <Link to="/pet-owner/pets" className={`${router.pathname.includes("/pet-owner/pets") ? "text-primaryColor" : "text-gray-500"} flex items-center w-full p-2 transition duration-75 rounded-lg pl-11 group hover:bg-gray-100`}>
+                                <Link to="/statistical" className={`${router.pathname.includes("/statistical") ? "text-primaryColor" : "text-gray-500"} flex items-center w-full p-2 transition duration-75 rounded-lg pl-11 group hover:bg-gray-100`}>
                                     Thống kê
                                 </Link>
                             </li>
@@ -102,31 +97,13 @@ const Sidebar = () => {
                     <li>
                         <button
                             className="flex items-center w-full p-2 text-base text-gray-900 transition duration-75 rounded-lg group hover:bg-gray-100"
-                            onClick={() => toggleDropdown("dateDropdown")}
-                        >
-                            <FontAwesomeIcon icon={faCalendarAlt} className="text-primaryColor" />
-                            <span className="flex-1 ml-3 text-left whitespace-nowrap">Ngày</span>
-                            <FontAwesomeIcon icon={faChevronDown} />
-                        </button>
-                        <ul className={`${dropdownStates.dateDropdown || router.pathname.includes("/appointment") ? "block" : "hidden"}`}>
-                            <li>
-                                <Link to="/pet-owner/appointments" className={`${router.pathname.includes("/pet-owner/appointment") ? "text-primaryColor" : "text-gray-500"} flex items-center w-full p-2 transition duration-75 rounded-lg pl-11 group hover:bg-gray-100`}>
-                                    Danh sách theo ngày
-                                </Link>
-                            </li>
-                        </ul>
-                    </li>
-
-                    <li>
-                        <button
-                            className="flex items-center w-full p-2 text-base text-gray-900 transition duration-75 rounded-lg group hover:bg-gray-100"
-                            onClick={() => toggleDropdown("accoutDropdown")}
+                            onClick={() => toggleDropdown("accountDropdown")}
                         >
                             <FontAwesomeIcon icon={faPeopleRoof} className="text-primaryColor" />
                             <span className="flex-1 ml-3 text-left whitespace-nowrap">Quản lý tài khoản</span>
                             <FontAwesomeIcon icon={faChevronDown} />
                         </button>
-                        <ul className={`${dropdownStates.accoutDropdown || router.pathname.includes("/manager-account") ? "block" : "hidden"}`}>
+                        <ul className={`${dropdownStates.accountDropdown || router.pathname.includes("/manager-account") ? "block" : "hidden"}`}>
                             <li>
                                 <Link to="/admin/manager-account" className={`${router.pathname.includes("/admin/manager-account") ? "text-primaryColor" : "text-gray-500"} flex items-center w-full p-2 transition duration-75 rounded-lg pl-11 group hover:bg-gray-100`}>
                                     Danh sách tài khoản

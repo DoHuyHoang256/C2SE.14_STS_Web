@@ -11,6 +11,8 @@ import ForgotPassword from "./pages/ForgotPassWord/ForgotPassword ";
 import DetailUserAccount from "./pages/Admin/DetailAccount";
 import ManagerAccount from "./pages/ManagerAccout/ManagerAccout";
 import HistoryTransaction from "./pages/HistoryTransaction/HistoryTransaction";
+import Statistical from "./pages/Statistical/Statistical";
+
 function App() {
 	const [user, setUser] = useState(null);
 
@@ -76,6 +78,11 @@ function App() {
 					exact
 					path="/transaction-history/:userId"
 					element={user ? <Navigate to="/" /> : < HistoryTransaction />}
+				/>
+				<Route
+					exact
+					path="/statistical"
+					element={user ? <Navigate to="/" /> : < Statistical />}
 				/>
 			</Routes>
 		</div>
