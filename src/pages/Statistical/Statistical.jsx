@@ -12,8 +12,10 @@ registerLocale('vi', vn);
 
 const StatisticsPage = () => {
     const [data, setData] = useState([
-        { name: 'Cơ sở 1', label: '04-01-2024', value: { 'Cơ sở 1': 35, } },
-        {  label: '04-02-2024', value: { 'Cơ sở 1': 45,  'Nguyễn Văn Linh': 85,} },
+         { name: 'Cơ sở 1', label: '04-01-2024', value: { 'Cơ sở 1': 35, } },
+        { name: 'Cơ sở 2', label: '04-01-2024', value: { 'Cơ sở 1': 45, } },
+        { name: 'Cơ sở 3', label: '04-01-2024', value: { 'Cơ sở 1': 55, } },
+         {  label: '04-02-2024', value: { 'Cơ sở 1': 45,  'Nguyễn Văn Linh': 85,} },
     ]);
     const chartRef = useRef(null);
     const [selectedBases, setSelectedBases] = useState(['Cơ sở 1',]);
@@ -210,7 +212,7 @@ const StatisticsPage = () => {
                             )
                         ))}
                     </div>
-
+//co so
                     <div className="flex">
                         <div className="mr-2 bg-[#212143] w-[40px] rounded-e mb-2 text-center flex items-center justify-center">
                             <button className="text-xl font-bold text-white" onClick={handleAddBase}><FontAwesomeIcon icon={faPlus} /></button>
