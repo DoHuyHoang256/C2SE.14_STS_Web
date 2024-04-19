@@ -94,28 +94,31 @@ const ManageUserAccount = () => {
                                 <thead>
                                     <tr className="text-gray-500">
                                         <th className="py-2 px-3 border-t text-black border-gray-300 bg-white">Họ và tên</th>
+                                        <th className="py-2 px-3 border-t text-black border-gray-300 bg-white">Email</th>
                                         <th className="py-2 px-3 border-t text-black border-gray-300 bg-white">Vai trò</th>
-                                        <th className="py-2 px-3 border-t text-black border-gray-300 bg-white">Mã số</th>
+                                        <th className="py-2 px-3 border-t text-black border-gray-300 bg-white">Tổng số dư</th>
                                         <th className="py-2 px-3 border-t text-black border-gray-300 bg-white">Lịch sử giao dịch</th>
-                                        <th className="py-2 px-3 border-t text-black border-gray-300 bg-white">Chi tiết</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     {filteredUsers.map((user, index) => (
                                         <tr key={index} className="text-gray-500">
-                                            <td className="py-2 px-3 border-t border-gray-300 bg-white">{user.full_name}</td>
-                                            <td className="py-2 px-3 border-t border-gray-300 bg-white">{user.role_name}</td>
-                                            <td className="py-2 px-3 border-t border-gray-300 bg-white">{user.user_code}</td>
+
+                                            <td className="py-2 px-3 border-t text-gray-700 border-gray-300 bg-white">
+                                                <Link to={`/admin/detail-account/${user.user_id}`}>{user.full_name}</Link></td>
+                                            <td className="py-2 px-3 border-t border-gray-300 bg-white">{user.email}</td>
+                                            <td className="py-2 px-3 border-t border-gray-300 bg-white">{user.role_name} </td>
+                                            <td className="py-2 px-3 border-t border-gray-300 bg-white">{user.user_code} VND</td>
                                             <td className="py-2 px-14 text-red-500 text-2xl border-t border-gray-300 bg-white">
                                                 <Link to={`/transaction-history/${user.user_id}`}>
                                                     <FontAwesomeIcon icon={faBuildingColumns} />
                                                 </Link>
                                             </td>
-                                            <td className="py-2 px-8 text-xl border-t border-gray-300 bg-white">
-                                            <Link to={`/admin/detail-account/${user.user_id}`}>
-                                                <FontAwesomeIcon icon={faCircleInfo} />
-                                            </Link>
-                                            </td>
+                                            {/*<td className="py-2 px-8 text-xl border-t border-gray-300 bg-white">*/}
+                                            {/*<Link to={`/admin/detail-account/${user.user_id}`}>*/}
+                                            {/*    <FontAwesomeIcon icon={faCircleInfo} />*/}
+                                            {/*</Link>*/}
+                                            {/*</td>*/}
                                         </tr>
                                     ))}
                                 </tbody>

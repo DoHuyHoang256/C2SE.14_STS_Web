@@ -12,7 +12,8 @@ import DetailUserAccount from "./pages/Admin/DetailAccount";
 import ManagerAccount from "./pages/ManagerAccout/ManagerAccout";
 import HistoryTransaction from "./pages/HistoryTransaction/HistoryTransaction";
 import Statistical from "./pages/Statistical/Statistical";
-
+import Profile from "./pages/Profile/Profile";
+import Revenue from "./pages/Revenue/Revenue";
 function App() {
 	const [user, setUser] = useState(null);
 
@@ -68,7 +69,7 @@ function App() {
 					exact
 					path="/admin/detail-account/:userId"
 					element={user ? <Navigate to="/" /> : < DetailUserAccount />}
-				/>	
+				/>
 				<Route
 					exact
 					path="/admin/manager-account"
@@ -84,6 +85,16 @@ function App() {
 					path="/statistical"
 					element={user ? <Navigate to="/" /> : < Statistical />}
 				/>
+				<Route
+					exact
+					path="/profile"
+					element={user ? <Navigate to="/" /> : < Profile />}
+				/><Route
+				exact
+				path="/revenue"
+				element={user ? <Navigate to="/" /> : < Revenue />}
+			/>
+
 			</Routes>
 		</div>
 	);
