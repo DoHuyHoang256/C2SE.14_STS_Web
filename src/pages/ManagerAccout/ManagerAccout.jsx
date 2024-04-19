@@ -9,9 +9,10 @@ import { Link } from "react-router-dom";
 const ManageUserAccount = () => {
     const [users, setUsers] = useState([]);
     const [searchTerm, setSearchTerm] = useState("");
+    const [currentPage, setCurrentPage] = useState(1);
 
     useEffect(() => {
-        axios.get("https://c2se-14-sts-api.onrender.com/api/allInfo")
+        axios.get(`https://c2se-14-sts-api.onrender.com/api/search?searchTerm=${searchTerm}&page=${currentPage}`) // Truyền currentPage vào URL
             .then(response => {
                 const userData = response.data.map(user => {
                     if (user.role) {
@@ -37,11 +38,20 @@ const ManageUserAccount = () => {
             .catch(error => {
                 console.error('Error fetching data:', error);
             });
-    }, []); 
+    }, [searchTerm, currentPage]); // Thêm currentPage vào dependency array
 
     const handleSearch = (event) => {
         setSearchTerm(event.target.value);
+        setCurrentPage(1);
     }
+
+    const handlePageChange = (direction) => {
+        if (direction === 'next') {
+            setCurrentPage(prevPage => prevPage + 1); // Tăng trang hiện tại lên 1 khi chuyển qua trang tiếp theo
+        } else if (direction === 'prev' && currentPage > 1) {
+            setCurrentPage(prevPage => prevPage - 1); // Giảm trang hiện tại đi 1 khi chuyển về trang trước đó (phải đảm bảo currentPage > 1)
+        }
+    };
 
     // Hàm để loại bỏ dấu từ chuỗi
     const removeAccents = (str) => {
@@ -93,28 +103,33 @@ const ManageUserAccount = () => {
                             <table className="min-w-full border-collapse w-full">
                                 <thead>
                                     <tr className="text-gray-500">
+                                        <th className="py-2 px-3 border-t text-black border-gray-300 bg-white">STT</th>
                                         <th className="py-2 px-3 border-t text-black border-gray-300 bg-white">Họ và tên</th>
+                                        <th className="py-2 px-3 border-t text-black border-gray-300 bg-white">Email</th>
                                         <th className="py-2 px-3 border-t text-black border-gray-300 bg-white">Vai trò</th>
-                                        <th className="py-2 px-3 border-t text-black border-gray-300 bg-white">Mã số</th>
+                                        <th className="py-2 px-3 border-t text-black border-gray-300 bg-white">Wallet</th>
                                         <th className="py-2 px-3 border-t text-black border-gray-300 bg-white">Lịch sử giao dịch</th>
                                         <th className="py-2 px-3 border-t text-black border-gray-300 bg-white">Chi tiết</th>
                                     </tr>
                                 </thead>
                                 <tbody>
+                                    {/* Dữ liệu hiển thị từ filteredUsers */}
                                     {filteredUsers.map((user, index) => (
                                         <tr key={index} className="text-gray-500">
+                                            <td className="py-2 px-3 border-t border-gray-300 bg-white">{index + 1}</td>
                                             <td className="py-2 px-3 border-t border-gray-300 bg-white">{user.full_name}</td>
+                                            <td className="py-2 px-3 border-t border-gray-300 bg-white">{user.email}</td>
                                             <td className="py-2 px-3 border-t border-gray-300 bg-white">{user.role_name}</td>
-                                            <td className="py-2 px-3 border-t border-gray-300 bg-white">{user.user_code}</td>
+                                            <td className="py-2 px-3 border-t border-gray-300 bg-white">{user.wallet}</td>
                                             <td className="py-2 px-14 text-red-500 text-2xl border-t border-gray-300 bg-white">
                                                 <Link to={`/transaction-history/${user.user_id}`}>
                                                     <FontAwesomeIcon icon={faBuildingColumns} />
                                                 </Link>
                                             </td>
                                             <td className="py-2 px-8 text-xl border-t border-gray-300 bg-white">
-                                            <Link to={`/admin/detail-account/${user.user_id}`}>
-                                                <FontAwesomeIcon icon={faCircleInfo} />
-                                            </Link>
+                                                <Link to={`/admin/detail-account/${user.user_id}`}>
+                                                    <FontAwesomeIcon icon={faCircleInfo} />
+                                                </Link>
                                             </td>
                                         </tr>
                                     ))}
@@ -122,7 +137,8 @@ const ManageUserAccount = () => {
                             </table>
                         </div>
                         <div className="border border-white py-8">
-                            <Pagination />
+                            {/* Truyền onPageChange vào PaginationAdmin */}
+                            <Pagination currentPage={currentPage} onPageChange={handlePageChange} />
                         </div>
                     </div>
                 </div>
