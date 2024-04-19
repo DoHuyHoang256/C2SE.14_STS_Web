@@ -73,7 +73,7 @@ const ManageUserAccount = () => {
                 <div className="col-span-3">
                     <div className="border border-white">
                         <Sidebar />
-                    </div>
+                    </div> 
                 </div>
                 <div className="col-span-9">
                     <div className="bg-[#ffff] border border-white p-2 rounded-lg">
