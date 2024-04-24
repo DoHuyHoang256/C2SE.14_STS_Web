@@ -153,7 +153,7 @@ const UserProfile = () => {
                                     name="postalCode"
                                     value={userData.postalCode}
                                     onChange={handleChange}
-                                    placeholder="Mã số"
+                                    placeholder="Biển số"
                                     className="input w-4/5 p-3 mb-4 rounded-md shadow-md border border-gray-300"
                                 />
                                 <input

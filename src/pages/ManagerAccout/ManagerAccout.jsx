@@ -39,7 +39,12 @@ const ManageUserAccount = () => {
                 console.error('Error fetching data:', error);
             });
     }, [searchTerm, currentPage]); // Thêm currentPage vào dependency array
-
+    function formatCurrency(value) {
+        // Chuyển đổi giá trị thành số và làm tròn đến hàng trăm gần nhất
+        const roundedValue = Math.round(parseFloat(value) * 100) / 100;
+        // Sử dụng hàm toLocaleString() để format theo ngôn ngữ địa phương và thêm dấu phẩy
+        return roundedValue.toLocaleString('vi-VN', { style: 'currency', currency: 'VND', minimumFractionDigits: 0, maximumFractionDigits: 0 });
+    }
     const handleSearch = (event) => {
         setSearchTerm(event.target.value);
         setCurrentPage(1);
@@ -107,30 +112,37 @@ const ManageUserAccount = () => {
                                         <th className="py-2 px-3 border-t text-black border-gray-300 bg-white">Họ và tên</th>
                                         <th className="py-2 px-3 border-t text-black border-gray-300 bg-white">Email</th>
                                         <th className="py-2 px-3 border-t text-black border-gray-300 bg-white">Vai trò</th>
-                                        <th className="py-2 px-3 border-t text-black border-gray-300 bg-white">Wallet</th>
-                                        <th className="py-2 px-3 border-t text-black border-gray-300 bg-white">Lịch sử giao dịch</th>
-                                        <th className="py-2 px-3 border-t text-black border-gray-300 bg-white">Chi tiết</th>
+                                        <th className="py-2 px-3 border-t text-black border-gray-300 bg-white">Số dư</th>
+                                        <th className="py-2 px-3 border-t text-black border-gray-300 bg-white">Tổng giao dịch</th>
+                                        {/*<th className="py-2 px-3 border-t text-black border-gray-300 bg-white">Chi tiết</th>*/}
                                     </tr>
                                 </thead>
                                 <tbody>
                                     {/* Dữ liệu hiển thị từ filteredUsers */}
                                     {filteredUsers.map((user, index) => (
                                         <tr key={index} className="text-gray-500">
-                                            <td className="py-2 px-3 border-t border-gray-300 bg-white">{index + 1}</td>
-                                            <td className="py-2 px-3 border-t border-gray-300 bg-white">{user.full_name}</td>
-                                            <td className="py-2 px-3 border-t border-gray-300 bg-white">{user.email}</td>
-                                            <td className="py-2 px-3 border-t border-gray-300 bg-white">{user.role_name}</td>
-                                            <td className="py-2 px-3 border-t border-gray-300 bg-white">{user.wallet}</td>
+                                            <td className="py-2 px-3 border-t text-black border-gray-300 bg-white">{index + 1}</td>
+                                            <td className="py-2 px-3 text-blue-600  bg-white border-b border-gray-300">
+                                                <Link className="" to={`/admin/detail-account/${user.user_id}`}>
+                                                    {user.full_name}
+                                                </Link>
+                                            </td>
+
+                                            <td className="py-2 px-3 border-t text-gray-900 border-gray-300 bg-white">{user.email}</td>
+                                            <td className="py-2 px-3 border-t text-gray-900 border-gray-300 bg-white">{user.role_name}</td>
+                                            <td className="py-2 px-3 border-t text-gray-900 border-gray-300 bg-white">
+                                                {formatCurrency(user.wallet.toLocaleString('vi-VN'))}
+                                            </td>
                                             <td className="py-2 px-14 text-red-500 text-2xl border-t border-gray-300 bg-white">
                                                 <Link to={`/transaction-history/${user.user_id}`}>
                                                     <FontAwesomeIcon icon={faBuildingColumns} />
                                                 </Link>
                                             </td>
-                                            <td className="py-2 px-8 text-xl border-t border-gray-300 bg-white">
-                                                <Link to={`/admin/detail-account/${user.user_id}`}>
-                                                    <FontAwesomeIcon icon={faCircleInfo} />
-                                                </Link>
-                                            </td>
+                                            {/*<td className="py-2 px-8 text-xl border-t border-gray-300 bg-white">*/}
+                                            {/*    <Link to={`/admin/detail-account/${user.user_id}`}>*/}
+                                            {/*        <FontAwesomeIcon icon={faCircleInfo} />*/}
+                                            {/*    </Link>*/}
+                                            {/*</td>*/}
                                         </tr>
                                     ))}
                                 </tbody>

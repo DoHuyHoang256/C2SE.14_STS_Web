@@ -85,18 +85,18 @@ const Sidebar = () => {
                             onClick={() => toggleDropdown("statisticDropdown")}
                         >
                             <FontAwesomeIcon icon={faBarcode} />
-                            <span className="flex-1 ml-3 text-left whitespace-nowrap">Thống kê</span>
+                            <span className="flex-1 ml-12 text-left whitespace-nowrap">Thống kê</span>
                             <FontAwesomeIcon icon={faChevronDown} />
                         </button>
                         <ul className={`${dropdownStates.statisticDropdown || router.pathname.includes("/statistical") ? "block" : "hidden"}`}>
                             <li>
                                 <Link to="/statistical" className={`${router.pathname.includes("/statistical") ? "text-primaryColor" : "text-gray-500"} flex items-center w-full p-2 transition duration-75 rounded-lg pl-11 group hover:bg-gray-100`}>
-                                    Thống kê
+                                    Số xe
                                 </Link>
                             </li>
                             <li>
                                 <Link to="/revenue" className={`${router.pathname.includes("/admin/admin-revenue") ? "text-primaryColor" : "text-gray-500"} flex items-center w-full p-2 text-gray-500 transition duration-75 rounded-lg pl-11 group hover:bg-gray-100`}>
-                                    Tinh Doanh thu
+                                    Doanh Thu
                                 </Link>
                             </li>
                         </ul>
@@ -108,45 +108,39 @@ const Sidebar = () => {
                             onClick={() => toggleDropdown("accountDropdown")}
                         >
                             <FontAwesomeIcon icon={faPeopleRoof} className="text-primaryColor" />
-                            <span className="flex-1 ml-3 text-left whitespace-nowrap">Quản lý tài khoản</span>
-                            <FontAwesomeIcon icon={faChevronDown} />
+                            <Link to="/admin/manager-account" className={`${router.pathname.includes("/admin/manager-account") ? "text-primaryColor" : "text-gray-500"} flex items-center w-full transition duration-75 rounded-lg pl-11 group hover:bg-gray-100`}>
+                                <span className="flex-1  text-left whitespace-nowrap">Quản lý tài khoản</span>
+                            </Link>
                         </button>
-                        <ul className={`${dropdownStates.accountDropdown || router.pathname.includes("/manager-account") ? "block" : "hidden"}`}>
-                            <li>
-                                <Link to="/admin/manager-account" className={`${router.pathname.includes("/admin/manager-account") ? "text-primaryColor" : "text-gray-500"} flex items-center w-full p-2 transition duration-75 rounded-lg pl-11 group hover:bg-gray-100`}>
-                                    Danh sách tài khoản
-                                </Link>
-                            </li>
-                        </ul>
                     </li>
 
-                    <li>
-                        <button
-                            className="flex items-center w-full p-2 text-base text-gray-900 transition duration-75 rounded-lg group hover:bg-gray-100"
-                            onClick={() => toggleDropdown("contactDropdown")}
-                        >
-                            <FontAwesomeIcon icon={faAddressBook} className="text-primaryColor" />
-                            <span className="flex-1 ml-3 text-left whitespace-nowrap">Contact</span>
-                            <FontAwesomeIcon icon={faChevronDown} />
-                        </button>
-                        <ul className={`${dropdownStates.contactDropdown || router.pathname.includes("vet/pet") ? "block" : "hidden"}`}>
-                            <li>
-                                <Link to="/vet/pets" className={`${router.pathname.includes("/vet/pets") ? "text-primaryColor" : "text-gray-500"} flex items-center w-full p-2 transition duration-75 rounded-lg pl-11 group hover:bg-gray-100`}>
-                                    Email
-                                </Link>
-                            </li>
-                            <li>
-                                <Link to="/vet/pets" className={`${router.pathname.includes("/vet/pet-advice") ? "text-primaryColor" : "text-gray-500"} flex items-center w-full p-2 text-gray-500 transition duration-75 rounded-lg pl-11 group hover:bg-gray-100`}>
-                                    Phone
-                                </Link>
-                            </li>
-                            <li>
-                                <Link to="/vet/pets" className={`${router.pathname.includes("/vet/pet-advice") ? "text-primaryColor" : "text-gray-500"} flex items-center w-full p-2 text-gray-500 transition duration-75 rounded-lg pl-11 group hover:bg-gray-100`}>
-                                    Website
-                                </Link>
-                            </li>
-                        </ul>
-                    </li>
+                    {/*<li>*/}
+                    {/*    <button*/}
+                    {/*        className="flex items-center w-full p-2 text-base text-gray-900 transition duration-75 rounded-lg group hover:bg-gray-100"*/}
+                    {/*        onClick={() => toggleDropdown("contactDropdown")}*/}
+                    {/*    >*/}
+                    {/*        <FontAwesomeIcon icon={faAddressBook} className="text-primaryColor" />*/}
+                    {/*        <span className="flex-1 ml-3 text-left whitespace-nowrap">Contact</span>*/}
+                    {/*        <FontAwesomeIcon icon={faChevronDown} />*/}
+                    {/*    </button>*/}
+                    {/*    <ul className={`${dropdownStates.contactDropdown || router.pathname.includes("vet/pet") ? "block" : "hidden"}`}>*/}
+                    {/*        <li>*/}
+                    {/*            <Link to="/vet/pets" className={`${router.pathname.includes("/vet/pets") ? "text-primaryColor" : "text-gray-500"} flex items-center w-full p-2 transition duration-75 rounded-lg pl-11 group hover:bg-gray-100`}>*/}
+                    {/*                Email*/}
+                    {/*            </Link>*/}
+                    {/*        </li>*/}
+                    {/*        <li>*/}
+                    {/*            <Link to="/vet/pets" className={`${router.pathname.includes("/vet/pet-advice") ? "text-primaryColor" : "text-gray-500"} flex items-center w-full p-2 text-gray-500 transition duration-75 rounded-lg pl-11 group hover:bg-gray-100`}>*/}
+                    {/*                Phone*/}
+                    {/*            </Link>*/}
+                    {/*        </li>*/}
+                    {/*        <li>*/}
+                    {/*            <Link to="/vet/pets" className={`${router.pathname.includes("/vet/pet-advice") ? "text-primaryColor" : "text-gray-500"} flex items-center w-full p-2 text-gray-500 transition duration-75 rounded-lg pl-11 group hover:bg-gray-100`}>*/}
+                    {/*                Website*/}
+                    {/*            </Link>*/}
+                    {/*        </li>*/}
+                    {/*    </ul>*/}
+                    {/*</li>*/}
 
                     <li>
                         <button className="flex items-center w-full p-2 text-base text-gray-900 transition duration-75 rounded-lg group hover:bg-gray-100">
