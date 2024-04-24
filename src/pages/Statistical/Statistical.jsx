@@ -5,11 +5,10 @@ import Sidebar from "../../components/Siderbar/Siderbar";
 import { registerLocale } from 'react-datepicker';
 import vn from 'date-fns/locale/vi';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faDatabase,faTrashCan,faPlus } from "@fortawesome/free-solid-svg-icons";
+import { faDatabase,faTrashCan,faPlus,faFileExport} from "@fortawesome/free-solid-svg-icons";
 import axios from 'axios';
 import { format } from 'date-fns';
 
-// Đăng ký ngôn ngữ
 registerLocale('vi', vn);
 
 const StatisticsPage = () => {
@@ -18,7 +17,7 @@ const StatisticsPage = () => {
     const [selectedBases, setSelectedBases] = useState([]);
     const [startDate, setStartDate] = useState(null); // Ensure startDate is initialized as a Date object
     const [endDate, setEndDate] = useState(null);
-    const [numberOfDays, setNumberOfDays] = useState(0); // Thêm state để lưu trữ số ngày giữa startDate và endDate
+    const [numberOfDays, setNumberOfDays] = useState(0);
     const [showAddBaseModal, setShowAddBaseModal] = useState(false);
     const [newBaseName, setNewBaseName] = useState('');
     const [locations, setLocations] = useState([]);
@@ -97,6 +96,7 @@ const StatisticsPage = () => {
         const ctx = document.getElementById('myChart');
     
         // Destroy the previous chart instance if it exists
+
         if (chartRef.current) {
             chartRef.current.destroy();
         }
@@ -247,7 +247,36 @@ const StatisticsPage = () => {
         setShowAddBaseModal(false);
         setNewBaseName('');
     };
+    const handleExport = () => {
+        // Tạo workbook mới
+        const workbook = XLSX.utils.book_new();
 
+        // Tạo mảng tất cả các ngày trong khoảng thời gian đã chọn
+        const allDates = [];
+        let currentDate = new Date(startDate);
+        while (currentDate <= endDate) {
+            const dateString = currentDate.toISOString().slice(5, 7) + '-' + currentDate.toISOString().slice(8, 10) + '-' + currentDate.getFullYear();
+            allDates.push(dateString);
+            currentDate.setDate(currentDate.getDate() + 1);
+        }
+
+        selectedBases.forEach(base => {
+            const worksheetData = [];
+
+            const headers = ['Ngày', base];
+            worksheetData.push(headers);
+            allDates.forEach(date => {
+                const rowData = [];
+                rowData.push(date); // Ngày
+                const foundData = data.find(item => item.label === date);
+                rowData.push(foundData ? foundData.value[base] || 0 : 0);
+                worksheetData.push(rowData);
+            });
+            const worksheet = XLSX.utils.aoa_to_sheet(worksheetData);
+            XLSX.utils.book_append_sheet(workbook, worksheet, base);
+        });
+        XLSX.writeFile(workbook, 'statistics.xlsx');
+    };
     return (
         <div className="grid grid-cols-12 gap-10">
             {/* Sidebar */}
@@ -256,7 +285,6 @@ const StatisticsPage = () => {
                     <Sidebar />
                 </div>
             </div>
-            {/* Main Content */}
             <div className="text-center bg-white w-[1000px] col-span-9 px-4">
                 <h3 className="py-2 mb-8 w-full text-center bg-[#F3F7FA]">Rất vui được gặp bạn, Hien 👋</h3>
                 <div className="mt-2 flex font-bold bg-[#F5F5F5] p-3 rounded-xl justify-between">
@@ -301,15 +329,20 @@ const StatisticsPage = () => {
                     <div className="text-center text-xl">
                         <p><FontAwesomeIcon  icon={faDatabase} /> : {selectedBases.length}</p>
                     </div>
-
+                    <div className="flex items-center ml-4">
+                        <button
+                        onClick={handleExport}
+                            className="flex items-center w-[90px] h-[50px] text-xl p-2 border rounded   hover:bg-blue-300"
+                        >
+                            <FontAwesomeIcon icon={faFileExport} className="mr-2" />
+                            Xuất File
+                        </button>
+                    </div>
                 </div>
-
-
                 {/* Chart */}
                 <div className="w-[850px] mt-8">
                     <canvas id="myChart" width="800" height="400"></canvas>
                 </div>
-                {/* Add Base Modal */}
                 {showAddBaseModal && (
                     <div className="fixed z-10 inset-0 overflow-y-auto flex justify-center items-center bg-gray-500 bg-opacity-50">
                         <div className="bg-white p-6 rounded-md">

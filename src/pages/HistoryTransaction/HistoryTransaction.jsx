@@ -7,7 +7,7 @@ import Pagination from "../../components/Pagination/Pagination";
 import { Link } from "react-router-dom";
 
 const TranscationHistory = () => {
-    
+
     function formatDate(dateString) {
         const date = new Date(dateString);
         const day = date.getDate();
@@ -61,14 +61,14 @@ const TranscationHistory = () => {
                         <div className="w-auto mx-4 h-full text-left bg-white rounded-lg shadow-lg py-14">
                             <table className="min-w-full border-collapse w-full">
                                 <thead>
-                                    <tr className="text-gray-500">
-                                        <th className="py-2 px-3 border-t text-black border-gray-300 bg-white">Họ và tên</th>
-                                        <th className="py-2 px-3 border-t text-black border-gray-300 bg-white">Ngày giao dịch</th>
-                                        <th className="py-2 px-3 border-t text-black border-gray-300 bg-white">Thời gian</th>
-                                        <th className="py-2 px-3 border-t text-black border-gray-300 bg-white">Số tiền</th>
-                                        <th className="py-2 px-3 border-t text-black border-gray-300 bg-white">Số dư</th>
-                                        <th className="py-2 px-3 border-t text-black border-gray-300 bg-white">Cơ sở</th>
-                                    </tr>
+                                <tr className="text-gray-500">
+                                    <th className="py-2 px-3 border-t text-black border-gray-300 bg-white">Họ và tên</th>
+                                    <th className="py-2 px-3 border-t text-black border-gray-300 bg-white">Ngày giao dịch</th>
+                                    <th className="py-2 px-3 border-t text-black border-gray-300 bg-white">Thời gian</th>
+                                    <th className="py-2 px-3 border-t text-black border-gray-300 bg-white">Số tiền</th>
+                                    <th className="py-2 px-3 border-t text-black border-gray-300 bg-white">Số dư</th>
+                                    <th className="py-2 px-3 border-t text-black border-gray-300 bg-white">Cơ sở</th>
+                                </tr>
                                 </thead>
                                 <tbody>
                                 {transactionHistory.map((item, index) => (

@@ -1,7 +1,15 @@
 import React, { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faUser, faBarcode, faPeopleRoof, faAddressBook, faRightFromBracket, faChevronDown } from "@fortawesome/free-solid-svg-icons";
+import {
+    faUser,
+    faBarcode,
+    faPeopleRoof,
+    faAddressBook,
+    faRightFromBracket,
+    faChevronDown,
+    faAddressCard,
+} from "@fortawesome/free-solid-svg-icons";
 
 const Sidebar = () => {
     const [dropdownStates, setDropdownStates] = useState({
@@ -60,7 +68,7 @@ const Sidebar = () => {
                         <ul className={`${dropdownStates.userDropdown || router.pathname.includes("/profile") ? "block" : "hidden"}`}>
                             <li>
                                 <Link to="/profile" className={`${router.pathname === "/profile" ? "text-primaryColor" : "text-gray-500"} flex items-center w-full p-2 transition duration-75 rounded-lg pl-11 group hover:bg-gray-100`}>
-                                    Hồ sơ
+                                    <FontAwesomeIcon className="mx-2" icon={faAddressCard} /> Hồ sơ
                                 </Link>
                             </li>
                             <li>
@@ -87,7 +95,7 @@ const Sidebar = () => {
                                 </Link>
                             </li>
                             <li>
-                                <Link to="/pet-owner/pets" className={`${router.pathname.includes("/pet-owner/pet-condition") ? "text-primaryColor" : "text-gray-500"} flex items-center w-full p-2 text-gray-500 transition duration-75 rounded-lg pl-11 group hover:bg-gray-100`}>
+                                <Link to="/revenue" className={`${router.pathname.includes("/admin/admin-revenue") ? "text-primaryColor" : "text-gray-500"} flex items-center w-full p-2 text-gray-500 transition duration-75 rounded-lg pl-11 group hover:bg-gray-100`}>
                                     Tinh Doanh thu
                                 </Link>
                             </li>
