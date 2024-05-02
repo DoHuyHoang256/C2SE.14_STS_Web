@@ -1,101 +1,120 @@
-import React, { useState } from 'react';
+import React, { useState,useEffect } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 import Sidebar from "../../components/Siderbar/Siderbar";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {faArrowLeft, faSearch} from "@fortawesome/free-solid-svg-icons";
-import {Link} from "react-router-dom";
+import { faArrowLeft, faEdit } from "@fortawesome/free-solid-svg-icons"; // Import faEdit icon
 import Pagination from "../../components/Pagination/Pagination";
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { Link } from "react-router-dom";
+import axios from "axios";
 
 const initialData = [
     { id: uuidv4(), name: 'Cơ sở 1', describe: 'toa 5', account: '5', address: 'Địa chỉ 1', price: 1000 },
-    { id: uuidv4(), name: 'Cơ sở 2', describe: 'toa 4', account: '5', address: 'Địa chỉ 2', price: 1500},
+    { id: uuidv4(), name: 'Cơ sở 2', describe: 'toa 4', account: '5', address: 'Địa chỉ 2', price: 1500 },
     { id: uuidv4(), name: 'Cơ sở 3', describe: 'toa 3', account: '5', address: 'Địa chỉ 3', price: 2000 },
     { id: uuidv4(), name: 'Cơ sở 4', describe: 'toa 2', account: '5', address: 'Địa chỉ 4', price: 2500 },
     { id: uuidv4(), name: 'Cơ sở 5', describe: 'toa 1', account: '5', address: 'Địa chỉ 5', price: 3000 },
     { id: uuidv4(), name: 'Cơ sở 6', describe: 'toa 6', account: '5', address: 'Địa chỉ 6', price: 350 },
-    // { id: uuidv4(), name: 'Cơ sở 7', describe: 'toa 7', account: '5', address: 'Địa chỉ 7', price: 400 },
-    // { id: uuidv4(), name: 'Cơ sở 8', describe: 'toa 8', account: '5', address: 'Địa chỉ 8', price: 450 },
-    // { id: uuidv4(), name: 'Cơ sở 9', describe: 'toa 9', account: '5', address: 'Địa chỉ 9', price: 500 },
-    // { id: uuidv4(), name: 'Cơ sở 10', describe: 'toa 10', account: '5', address: 'Địa chỉ 10', price: 550 },
+
+
 ];
+const PAGE_LENGTH = 7;
 
-const BaseList = () => {
-    const [bases, setBases] = useState(initialData);
-    const [newBaseName, setNewBaseName] = useState('');
-    const [newBaseAddress, setNewBaseAddress] = useState('');
-    const [newBaseDescribe, setNewBaseDescribe] = useState('');
-    const [newBaseAccount, setNewBaseAccount] = useState('');
-    const [searchTerm, setSearchTerm] = useState('');
+const LocationList = () => {
+
+    const [bases, setLocations] = useState([]);
+    const [newLocationName, setNewLocationName] = useState('');
+    const [newLocationAddress, setNewLocationAddress] = useState('');
+    const [newLocationDescribe, setNewLocationDescribe] = useState('');
+    const [newLocationAccount, setNewLocationAccount] = useState('');
+    const [showModal, setShowModal] = useState(false);
+    const [editLocation, setEditLocation] = useState(null);
+    const [isAddingLocation, setIsAddingLocation] = useState(true);
     const [currentPage, setCurrentPage] = useState(1);
+    const startIndex = (currentPage - 1) * PAGE_LENGTH;
+    const endIndex = currentPage * PAGE_LENGTH;
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const response = await axios.get('https://c2se-14-sts-api.onrender.com/api/locations');
+                if (response.data.length <= PAGE_LENGTH) {
+                    setLocations(response.data);
+                } else {
+                    // Nếu có nhiều hơn PAGE_LENGTH mục, chỉ lấy PAGE_LENGTH mục đầu tiên
+                    setLocations(response.data.slice(0, PAGE_LENGTH));
+                }
+            } catch (error) {
+                console.error('Error fetching data:', error);
+            }
+        };
+        fetchData();
+    }, []);
 
-    const handleAddBase = () => {
-        if (newBaseName.trim() !== '') {
-            const newBase = {
-                id: uuidv4(),
-                name: newBaseName.trim(),
-                address: newBaseAddress.trim(),
-                describe: newBaseDescribe.trim(),
-                account: newBaseAccount.trim(),
-                price: 0,
-            };
-            setBases([...bases, newBase]);
-            setNewBaseName('');
-            setNewBaseAddress('');
-            setNewBaseDescribe('');
-            setNewBaseAccount('');
-            toast.success('Cơ sở đã được thêm thành công.', { autoClose: 3000 });
-        } else {
-            toast.error('Vui lòng nhập tên cơ sở.', { autoClose: 3000 });
+    const handleAddLocation = async () => {
+        if (newLocationName.trim() !== '' && newLocationAddress.trim() !== '' && newLocationDescribe.trim() !== '' && newLocationAccount.trim() !== '') {
+            try {
+                const response = await axios.post('https://c2se-14-sts-api.onrender.com/api/locations', {
+                    location_name: newLocationName.trim(), // Sử dụng location_name thay vì name
+                    address: newLocationAddress.trim(),
+                    describe: newLocationDescribe.trim(),
+                    account: newLocationAccount.trim(),
+                    cost: 0 // Đặt giá tiền mặc định, sử dụng cost thay vì price
+                });
+                console.log('New location added:', response.data);
+                setLocations([...bases, response.data]);
+                setNewLocationName('');
+                setNewLocationAddress('');
+                setNewLocationDescribe('');
+                setNewLocationAccount('');
+                setShowModal(false);
+                setIsAddingLocation(true);
+            } catch (error) {
+                console.error('Error adding new location:', error);
+            }
         }
     };
 
-    const handleDeleteBase = (id) => {
-        setBases(bases.filter((base) => base.id !== id));
-        toast.success('Cơ sở đã được xóa thành công.', { autoClose: 3000 });
+    const baseUrl = 'https://c2se-14-sts-api.onrender.com/api/locations'; // URL cơ sở của API
+
+    const handleDeleteLocation = (id) => {
+        // Gọi API để xóa cơ sở
+        fetch(`${baseUrl}/${id}`, { // Sử dụng baseUrl và thêm locationId vào URL
+            method: 'DELETE',
+        })
+            .then(response => {
+                if (response.ok) {
+                    setLocations(bases.filter(base => base.id !== id));
+                    toast.success('Cơ sở đã được xóa thành công.', { autoClose: 3000 });
+                } else {
+                    toast.error('Đã xảy ra lỗi khi xóa cơ sở.', { autoClose: 3000 });
+                }
+            })
+            .catch(error => console.error('Error deleting base:', error));
     };
 
     const handleSaveChanges = () => {
+        // Thực hiện các thay đổi và lưu vào cơ sở dữ liệu
+        // Không cần gọi API ở đây vì đã thực hiện gọi API khi thêm hoặc sửa cơ sở
         toast.success('Thay đổi đã được lưu thành công.', { autoClose: 3000 });
     };
 
+    const displayedData = bases.slice(startIndex, endIndex);
 
-    const handleSearch = (event) => {
-        setSearchTerm(event.target.value);
+    const handlePageChange = (pageNumber) => {
+        setCurrentPage(pageNumber);
     };
-    const handlePageChange = (direction) => {
-        if (direction === 'next') {
-            setCurrentPage(prevPage => prevPage + 1); // Tăng trang hiện tại lên 1 khi chuyển qua trang tiếp theo
-        } else if (direction === 'prev' && currentPage > 1) {
-            setCurrentPage(prevPage => prevPage - 1); // Giảm trang hiện tại đi 1 khi chuyển về trang trước đó (phải đảm bảo currentPage > 1)
-        }
-    };
-
-    const handlePriceChange = (id, price) => {
-        setBases(
-            bases.map((base) =>
-                base.id === id ? { ...base, price: parseInt(price) } : base
-            )
-        );
-    };
-
-
-
-    const filteredBases = bases.filter((base) =>
-        base.name.toLowerCase().includes(searchTerm.toLowerCase())
-    );
 
     return (
         <div className="bg-white w-full h-full px-8">
             <div className="grid grid-cols-12 gap-10">
-                <div className="col-span-3">
-                    <div className="border border-white">
-                        <Sidebar /> {/* Sidebar component */}
+                <div className="col-span-2">
+                    <div className=" w-[300px] border border-white">
+                        <Sidebar />
                     </div>
                 </div>
-                <div className="col-span-9 bg-[#F5F5F5] p-5 flex flex-col justify-between">
-                    <div className=" items-start bg-white mx-auto p-4">
+                <div className="col-span-10 bg-[#F5F5F5] ml-10 p-5 flex flex-col justify-between">
+                    <div className="items-start w-[1110px] bg-white mx-auto p-4">
                         <div className="flex items-center  mb-8">
                             <div className="button rounded-full text-center bg-[#F9FBFF] items-center justify-center w-[60px] h-[30px] p-1 mr-2">
                                 <Link to='/admin/manager-account'>
@@ -105,84 +124,137 @@ const BaseList = () => {
                             <h1 className="text-2xl font-bold">Danh Sách Cơ Sở </h1>
                         </div>
                         <div className="mb-4 flex">
-                            <input
-                                type="text"
-                                className="w-1/4 p-2 border rounded mr-2"
-                                placeholder="Tên cơ sở mới..."
-                                value={newBaseName}
-                                onChange={(e) => setNewBaseName(e.target.value)}
-                            />
-                            <input
-                                type="text"
-                                className="w-1/4 p-2 border rounded mr-2"
-                                placeholder="Địa chỉ cơ sở mới..."
-                                value={newBaseAddress}
-                                onChange={(e) => setNewBaseAddress(e.target.value)}
-                            />
-                            <input
-                                type="text"
-                                className="w-1/4 p-2 border rounded mr-2"
-                                placeholder="Mô tả cơ sở mới..."
-                                value={newBaseDescribe}
-                                onChange={(e) => setNewBaseDescribe(e.target.value)}
-                            />
-                            <input
-                                type="text"
-                                className="w-1/4 p-2 border rounded"
-                                placeholder="Giá tiền"
-                                value={newBaseAccount}
-                                onChange={(e) => setNewBaseAccount(e.target.value)}
-                            />
                             <button
-                                className="px-4 w-[150px] py-2 bg-blue-500 text-white rounded ml-2 hover:bg-blue-600"
-                                onClick={handleAddBase}
+                                className="px-4 w-[150px] py-2 bg-[#212143] text-white rounded ml-2 hover:bg-blue-600"
+                                onClick={() => setShowModal(true)}
                             >
                                 Thêm cơ sở
                             </button>
                         </div>
-                        <table className="w-full border-collapse border">
+                        {showModal && (
+                            <div className="fixed inset-0 bg-gray-700 bg-opacity-50 flex justify-center items-center">
+                                <div className="bg-white w-[500px] p-4 rounded">
+                                    <h2 className="text-lg font-semibold mb-2">{isAddingLocation ? 'Thêm cơ sở mới' : 'Chỉnh sửa cơ sở'}</h2>
+                                    <label className="block mb-2">
+                                        Tên cơ sở:
+                                        <input
+                                            type="text"
+                                            className="w-full p-2 border rounded"
+                                            placeholder="Tên cơ sở..."
+                                            value={newLocationName}
+                                            onChange={(e) => setNewLocationName(e.target.value)}
+                                        />
+                                    </label>
+                                    <label className="block mb-2">
+                                        Địa chỉ:
+                                        <input
+                                            type="text"
+                                            className="w-full p-2 border rounded"
+                                            placeholder="Địa chỉ..."
+                                            value={newLocationAddress}
+                                            onChange={(e) => setNewLocationAddress(e.target.value)}
+                                        />
+                                    </label>
+                                    <label className="block mb-2">
+                                        Mô tả:
+                                        <input
+                                            type="text"
+                                            className="w-full p-2 border rounded"
+                                            placeholder="Mô tả..."
+                                            value={newLocationDescribe}
+                                            onChange={(e) => setNewLocationDescribe(e.target.value)}
+                                        />
+                                    </label>
+                                    <label className="block mb-2">
+                                        Email:
+                                        <input
+                                            type="text"
+                                            className="w-full p-2 border rounded"
+                                            placeholder="Email..."
+                                            value={newLocationAccount}
+                                            onChange={(e) => setNewLocationAccount(e.target.value)}
+                                        />
+                                    </label>
+                                    {!isAddingLocation && ( // Render price input only when editing
+                                        <label className="block mb-2">
+                                            Giá tiền:
+                                            <input
+                                                type="number"
+                                                className="w-full p-2 border rounded"
+                                                placeholder="Giá tiền..."
+                                                value={editLocation ? editLocation.price : ''}
+                                                onChange={(e) => setEditLocation({...editLocation, price: e.target.value})}
+                                            />
+                                        </label>
+                                    )}
+                                    <div className="flex justify-end">
+                                        <button
+                                            className="px-4 py-2 bg-green-500 text-white rounded mr-2 hover:bg-blue-600"
+                                            onClick={handleAddLocation}
+                                        >
+                                            {isAddingLocation ? 'Thêm' : 'Lưu'}
+                                        </button>
+                                        <button
+                                            className="px-4 py-2 bg-gray-500 text-white rounded hover:bg-gray-600"
+                                            onClick={() => setShowModal(false)}
+                                        >
+                                            Đóng
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        )}
+                        <table className="w-full text-left border-collapse border">
                             <thead>
                             <tr className="bg-gray-200">
+                                <th className="p-2 border">STT</th>
                                 <th className="p-2 border">Tên cơ sở</th>
                                 <th className="p-2 border">Địa chỉ</th>
                                 <th className="p-2 border">Mô tả</th>
-                                <th className="p-2 border">Số TKBV</th>
+                                <th className="p-2 border">Email</th>
                                 <th className="p-2 border">Giá tiền</th>
                                 <th className="p-2 border">Hành động</th>
                             </tr>
                             </thead>
-                            <tbody className="text-center">
-                            {filteredBases.map((base) => (
+                            <tbody className="text-left">
+                            {bases.map((base, index) => (
                                 <tr key={base.id}>
-                                    <td className="p-2 border">{base.name}</td>
-                                    <td className="p-2 border">{base.address}</td>
-                                    <td className="p-2 border">{base.describe}</td>
-                                    <td className="p-2 border">{base.account}</td>
-                                    <td className="p-2  border">
+                                    <td className="p-2 border">{index + 1}</td>
+                                    <td className="p-2 border">{base.location_name}</td>
+                                    <td className="p-2 border">{base.user_id}</td>
+                                    <td className="p-2 border">{base.status_text}</td>
+                                    <td className="p-2 border text-blue-700">{base.email}</td>
+                                    <td className="p-2 border">
                                         <input
                                             type="number"
-                                            className="w-24 p-1  border rounded"
-                                            value={base.price}
-                                            onChange={(e) => handlePriceChange(base.id, e.target.value)}
+                                            className="w-24 p-1 border rounded"
+                                            value={base.cost}
+                                            onChange={(e) => setEditLocation({...base, cost: e.target.value})}
                                         />
                                     </td>
                                     <td className="p-2 border">
                                         <button
                                             className="px-4 py-2 bg-red-600 text-white rounded mr-2 hover:bg-red-400"
-                                            onClick={() => handleDeleteBase(base.id)}
+                                            onClick={() => handleDeleteLocation(base.id)}
                                         >
                                             Xóa
+                                        </button>
+                                        <button
+                                            className="px-4 py-2 bg-[#212143] text-white rounded mr-2 hover:bg-blue-600"
+                                            onClick={() => handleEditLocation(base)}
+                                        >
+                                            <FontAwesomeIcon icon={faEdit} /> Sửa
                                         </button>
                                     </td>
                                 </tr>
                             ))}
                             </tbody>
+
                         </table>
-                        <div className="border items-end border-white py-3">
-                            {/* Truyền onPageChange vào PaginationAdmin */}
+                        <div className="border items-end border-white ">
                             <Pagination currentPage={currentPage} onPageChange={handlePageChange} />
                         </div>
-                        <div className="  mx-4 items-end">
+                        <div className="mx-4 items-end">
                             <button
                                 className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-400"
                                 onClick={handleSaveChanges}
@@ -200,4 +272,4 @@ const BaseList = () => {
     );
 };
 
-export default BaseList;
+export default LocationList;
