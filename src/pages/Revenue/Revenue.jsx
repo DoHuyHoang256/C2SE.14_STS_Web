@@ -2,14 +2,18 @@ import React, { useState } from 'react';
 import { Line } from 'react-chartjs-2';
 import Sidebar from "../../components/Siderbar/Siderbar";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faDownload } from "@fortawesome/free-solid-svg-icons";
+import {faDownload, faSearch} from "@fortawesome/free-solid-svg-icons";
 import * as XLSX from 'xlsx';
-
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
 
 const RevenueUpdate = () => {
+    const [startDate, setStartDate] = useState(new Date());
+    const [endDate, setEndDate] = useState(new Date());
+
     // Dữ liệu doanh thu mẫu cho 3 cơ sở
     const [revenueData, setRevenueData] = useState({
-        labels: ['Tháng 1', 'Tháng 2', 'Tháng 3', 'Tháng 4', 'Tháng 5', 'Tháng 6'],
+        labels: ['01/01/2024', '02/01/2024', '03/01/2024', '04/01/2024', '05/01/2024', '06/01/2024','0/01/2024'], // Thêm ngày vào nhãn của biểu đồ
         datasets: [
             {
                 label: 'Cơ sở A',
@@ -35,10 +39,7 @@ const RevenueUpdate = () => {
         ],
     });
 
-    // State để lưu trữ danh sách cơ sở được chọn
     const [selectedBranches, setSelectedBranches] = useState(['Cơ sở A']);
-
-    // Hàm xử lý sự kiện khi chọn cơ sở từ checkbox
     const handleBranchChange = (e) => {
         const { value, checked } = e.target;
         if (checked) {
@@ -48,8 +49,6 @@ const RevenueUpdate = () => {
         }
     };
 
-    // Tính tổng dữ liệu của các cơ sở được chọn
-    // Tính tổng dữ liệu của các cơ sở được chọn và tổng của tất cả các tháng
     const calculateTotalData = () => {
         let totalData = new Array(revenueData.labels.length).fill(0);
         selectedBranches.forEach(branch => {
@@ -75,10 +74,6 @@ const RevenueUpdate = () => {
         return totalData;
     };
 
-    // Lọc dữ liệu cho biểu đồ dựa trên các cơ sở được chọn
-    const filteredData = revenueData.datasets.filter(dataset => selectedBranches.includes(dataset.label));
-
-    // Tính toán dữ liệu tổng của các cơ sở được chọn
     const totalData = calculateTotalData();
 
     // Hàm xuất file Excel
@@ -95,18 +90,39 @@ const RevenueUpdate = () => {
         XLSX.writeFile(wb, "revenue_data.xlsx");
     };
 
+    const filteredData = revenueData.datasets.map(dataset => {
+        return {
+            ...dataset,
+            data: dataset.data.slice(startDate.getDate() - 1, endDate.getDate()) // Sử dụng getDate() thay vì getMonth()
+        };
+    });
+
+
+    // Options for displaying selected dates on the chart
+    const options = {
+        scales: {
+            x: {
+                ticks: {
+                    callback: function(value, index, values) {
+                        return startDate.getDate() + index + '/' + (startDate.getMonth() + 1);
+                    }
+                }
+            }
+        }
+    };
+
     return (
-        <div className="grid w-full grid-cols-12 gap-10">
-            <div className="mx-10 col-span-3">
+        <div className="grid w-full grid-cols-12 mt-8 gap-10">
+            <div className=" w-[300px] mx-10 col-span-3">
                 <div className="border border-white h-screen flex flex-col justify-between">
                     <Sidebar />
                 </div>
             </div>
 
-            <div className="col-span-9 p-8 bg-white rounded-lg shadow-lg flex flex-col">
+            <div className="col-span-8   w-[1100px] p-8 bg-white rounded-lg shadow-lg flex flex-col">
                 <h1 className="text-2xl font-bold mb-4">Cập nhật doanh thu</h1>
                 <div className=" mt-4">
-                    <label className="block text-sm font-medium text-gray-700">Chọn cơ sở:</label>
+                    <label className="block text-lg font-medium text-gray-700">Chọn cơ sở:</label>
                     <div className="flex items-center mt-1">
                         <label className="flex items-center mr-4">
                             <input type="checkbox" className="form-checkbox" value="Cơ sở A" checked={selectedBranches.includes('Cơ sở A')} onChange={handleBranchChange} />
@@ -120,48 +136,68 @@ const RevenueUpdate = () => {
                             <input type="checkbox" className="form-checkbox" value="Cơ sở C" checked={selectedBranches.includes('Cơ sở C')} onChange={handleBranchChange} />
                             <span className="ml-2">Cơ sở C</span>
                         </label>
-                    </div>
-                    <div className="mt-4">
-                        <h2 className="text-lg font-semibold mb-2">Tổng doanh thu của các cơ sở được chọn:</h2>
-                        <div>
-                            <p>Tổng doanh thu: {selectedBranches.length > 0 ? totalData.reduce((a, b) => a + b, 0) : 0}</p>
+                        <div className=" mx-36">
+                            <div>
+                                <p>Tổng doanh thu: {selectedBranches.length > 0 ? totalData.reduce((a, b) => a + b, 0) : 0}</p>
+                            </div>
                         </div>
+                        <button onClick={exportToExcel} className="bg-white mx-16 hover:bg-blue-400 text-right text-black font-bold py-2 px-4 rounded">
+                            <FontAwesomeIcon icon={faDownload} /> Xuất file
+                        </button>
+
                     </div>
 
                 </div>
-                <div className="flex p-6 h-[300px] flex-wrap  mt-4 items-start justify-between mb-8">
-                    <div className="w-full h-[300px] p-6 bg-[#F9FBFF] md:w-[50%] mb-4 md:mb-0">
-                        <div className="w-full">
-                            <Line data={{ labels: revenueData.labels, datasets: filteredData }} />
+                <div className="flex p-6 h-[400px] flex-wrap  mt-4 items-start justify-between mb-8">
+                    <div className="w-[500px] h-[320px] p-6 bg-[#F9FBFF] md:w-[55%] mb-4 md:mb-0">
+                        <div className="w-[500px] h-[320px] ">
+                            <Line data={{ labels: revenueData.labels, datasets: filteredData }} options={options} />
                         </div>
                     </div>
-
                     <div className="w-full md:w-[40%] overflow-x-auto">
-                        <button onClick={exportToExcel} className="bg-white hover:bg-blue-400 text-right text-black font-bold py-2 px-4 rounded">
-                            <FontAwesomeIcon icon={faDownload} /> Xuất file Excel
-                        </button>
-                        <h2 className="text-lg font-semibold mt-6 mb-2">Lịch sử giao dịch</h2>
-                        <table className="min-w-full divide-y divide-gray-200">
-                            <thead className="bg-gray-50">
-                            <tr>
-                                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Ngày</th>
-                                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Mô tả</th>
-                                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Số tiền</th>
-                            </tr>
-                            </thead>
-                            <tbody className="bg-white divide-y divide-gray-200">
-                            <tr>
-                                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">01/04/2024</td>
-                                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Mua hàng</td>
-                                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">$50.00</td>
-                            </tr>
-                            <tr>
-                                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">02/04/2024</td>
-                                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Bán hàng</td>
-                                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">$100.00</td>
-                            </tr>
-                            </tbody>
-                        </table>
+                        {/*<p> Ngày bắt đầu</p>*/}
+                        <DatePicker  selected={startDate} onChange={date => setStartDate(date)} />
+                        <DatePicker selected={endDate} onChange={date => setEndDate(date)} />
+
+                        <div className="flex items-center mt-4 mb-4">
+                            <h3 className="text-lg  font-semibold mr-1">Lịch sử giao dịch</h3>
+                            <div className="flex-grow "></div> {/* Để căn lề phải cho thanh tìm kiếm và nút */}
+                            <input  type="text" placeholder="Tìm kiếm..." className="border border-gray-300 px-2 py-1 rounded-md mr-2" />
+                            <button className="bg-blue-500 w-[50px] text-white px-2 py-1 rounded-md"> <FontAwesomeIcon icon={faSearch} /></button>
+                        </div>
+
+                        <div className="overflow-y-auto max-h-[200px]">
+                            <table className="divide-y divide-gray-200">
+                                <thead className="bg-gray-50">
+                                <tr>
+                                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Họ tên</th>
+                                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Ngày</th>
+                                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Số tiền</th>
+                                </tr>
+                                </thead>
+                                <tbody className="bg-white divide-y divide-gray-200">
+                                <tr>
+                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Phi Hien</td>
+                                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">01/04/2024</td>
+                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">$50.00</td>
+                                </tr>
+                                <tr>
+                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Huy Hoangg</td>
+                                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">02/04/2024</td>
+                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">$100.00</td>
+                                </tr>
+                                <tr>
+                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Phi Hien</td>
+                                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">01/04/2024</td>
+                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">$50.00</td>
+                                </tr>    <tr>
+                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Phi Hien</td>
+                                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">01/04/2024</td>
+                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">$50.00</td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
             </div>

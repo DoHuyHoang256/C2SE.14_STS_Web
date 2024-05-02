@@ -39,7 +39,7 @@ const DetailUserAccount = () => {
                     fullName: data.full_name,
                     phoneNumber: data.phone_number,
                     userCode: data.user_code,
-                    address: `${data.address} ${data.warn} ${data.district} ${data.city}`,
+                    address: data.address,
                 });
                 setSelectedGenderId(data.gender);
                 setSelectedRoleId(data.role);
@@ -123,6 +123,25 @@ const DetailUserAccount = () => {
             console.error("Error saving changes:", error);
         }
     };
+    const handleAddressChange = (e) => {
+        const addressInput = e.target.value;
+        const addressParts = addressInput.split(" ");
+        const rearrangedAddressParts = [
+            addressParts[0] || '',
+            addressParts[1] || '',
+            addressParts[2] || '',
+            addressParts[3] || '',
+            addressParts[4] || '',
+        ];
+
+        const rearrangedAddress = rearrangedAddressParts.join(" ").trim();
+        setEditedUser((prevUser) => ({
+            ...prevUser,
+            address: rearrangedAddress,
+        }));
+    };
+
+
 
     if (loading) {
         return <Spinner color="blue" />;
@@ -133,9 +152,8 @@ const DetailUserAccount = () => {
     }
 
     return (
-        <div className="grid grid-cols-12 gap-4">
-            {/* Sidebar */}
-            <div className="col-span-12 lg:col-span-3">
+        <div className="grid mx-16 bg-white grid-cols-12 gap-4">
+            <div className=" w-[300px] col-span-12 lg:col-span-3 mx-4">
                 <Sidebar />
             </div>
 
@@ -187,12 +205,12 @@ const DetailUserAccount = () => {
                                 selected={editedDateOfBirth}
                                 onChange={handleDateOfBirthChange}
                                 dateFormat="dd/MM/yyyy"
-                                className="w-full p-2 border rounded mb-2"
+                                className="w-[300px] p-2 border rounded mb-2"
                             />
                         </div>
 
                         <div className="mb-4">
-                            <label className="block  font-bold text-gray-700 mb-2">Mã số:</label>
+                            <label className="block  font-bold text-gray-700 mb-2">Biển số:</label>
                             <input
                                 type="text"
                                 className="w-full p-2 border rounded mb-2"
@@ -204,7 +222,7 @@ const DetailUserAccount = () => {
 
                     </div>
 
-                    <div className="col-span-1 w-[300px]">
+                    <div className="col-span-1 w-[400px]">
                         <div className="mb-4">
                             <label className="block  font-bold text-gray-700 mb-2">Số điện thoại:</label>
                             <input
@@ -235,7 +253,7 @@ const DetailUserAccount = () => {
                                 type="text"
                                 className="w-full p-2 border rounded mb-2"
                                 value={editedUser.address}
-                                onChange={handleInputChange}
+                                onChange={handleAddressChange}
                                 name="address"
                             />
                         </div>

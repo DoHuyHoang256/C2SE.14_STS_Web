@@ -14,6 +14,7 @@ import HistoryTransaction from "./pages/HistoryTransaction/HistoryTransaction";
 import Statistical from "./pages/Statistical/Statistical";
 import Profile from "./pages/Profile/Profile";
 import Revenue from "./pages/Revenue/Revenue";
+import Location from "./pages/BaseList/BaseList";
 function App() {
 	const [user, setUser] = useState(null);
 
@@ -74,6 +75,11 @@ function App() {
 					exact
 					path="/admin/manager-account"
 					element={user ? <Navigate to="/" /> : < ManagerAccount />}
+				/>
+				<Route
+					exact
+					path="/admin/list-of-location"
+					element={user ? <Navigate to="/" /> : < Location />}
 				/>
 				<Route
 					exact

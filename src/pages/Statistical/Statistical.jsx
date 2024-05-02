@@ -8,6 +8,9 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faDatabase,faTrashCan,faPlus,faFileExport} from "@fortawesome/free-solid-svg-icons";
 import axios from 'axios';
 import { format } from 'date-fns';
+import * as XLSX from 'xlsx';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 registerLocale('vi', vn);
 
@@ -23,7 +26,7 @@ const StatisticsPage = () => {
     const [locations, setLocations] = useState([]);
     const [selectedLocations, setSelectedLocations] = useState([]);
 
-    
+
     const formatDate = (isoDate) => {
         const date = new Date(isoDate);
         return format(date, 'dd-MM-yyyy');
@@ -42,11 +45,16 @@ const StatisticsPage = () => {
                 name: item.location_name,
                 label: formatDate(item.transaction_date),
                 value: { [item.location_name]: parseInt(item.total_transactions) },
-            }));            
+            }));
             setData(formattedData);
             console.log(data);
+
+            // Hiển thị thông báo toast khi tải dữ liệu thành công
+           // toast.success('Dữ liệu đã được tải thành công!');
         } catch (error) {
             console.error('Error fetching data:', error);
+            // Hiển thị thông báo toast khi có lỗi xảy ra
+            toast.error('Đã xảy ra lỗi khi tải dữ liệu.');
         }
     };
 
@@ -73,7 +81,7 @@ const StatisticsPage = () => {
     useEffect(() => {
         fetchData();
     }, []);
-    
+
     useEffect(() => {
     console.log('Locations:', locations);
 }, [locations]);
@@ -91,23 +99,22 @@ const StatisticsPage = () => {
         'rgba(128, 0, 128, 0.2)'
     ];
 
-    
+
     const updateChart = () => {
         const ctx = document.getElementById('myChart');
-    
-        // Destroy the previous chart instance if it exists
+
 
         if (chartRef.current) {
             chartRef.current.destroy();
         }
-    
+
         const filteredData = data.filter(item => {
             const currentDate = new Date(item.label.replace(/-/g, '/'));
             const startDateWithoutTime = startDate ? new Date(startDate.getFullYear(), startDate.getMonth(), startDate.getDate()) : null;
             const endDateWithoutTime = endDate ? new Date(endDate.getFullYear(), endDate.getMonth(), endDate.getDate()) : null;
             return (!startDate || currentDate >= startDateWithoutTime) && (!endDate || currentDate <= endDateWithoutTime);
         });
-    
+
         const allDates = [];
         if (startDate && endDate) {
             const currentDate = new Date(startDate);
@@ -116,9 +123,9 @@ const StatisticsPage = () => {
                 currentDate.setDate(currentDate.getDate() + 1);
             }
         }
-    
+
         const labels = allDates;
-    
+
         chartRef.current = new Chart(ctx, {
             type: 'bar',
             data: {
@@ -144,7 +151,7 @@ const StatisticsPage = () => {
                 categorySpacing: 8,
             },
         });
-    
+
         if (startDate && endDate) {
             const diffInTime = endDate.getTime() - startDate.getTime();
             const diffInDays = diffInTime / (1000 * 3600 * 24);
@@ -153,7 +160,7 @@ const StatisticsPage = () => {
             setNumberOfDays(0);
         }
     };
-    
+
     const handleBaseChange = (event, baseId) => {
         const selectedBaseName = locations.find(location => location.location_id === baseId)?.location_name;
         const isChecked = event.target.checked;
@@ -164,20 +171,17 @@ const StatisticsPage = () => {
         }
         setSelectedBases(prevSelectedBases => {
             if (isChecked) {
-                // Nếu được kiểm tra, thêm tên địa điểm vào mảng nếu chưa tồn tại
                 return prevSelectedBases.includes(selectedBaseName)
                     ? prevSelectedBases
                     : [...prevSelectedBases, selectedBaseName];
             } else {
-                // Nếu không được kiểm tra, loại bỏ tên địa điểm khỏi mảng
                 return prevSelectedBases.filter(base => base !== selectedBaseName);
             }
         });
-    
+
     };
-    
+
     const handleDeleteSelectedLocations = async () => {
-        // Gửi yêu cầu DELETE để xóa các địa điểm đã chọn
         try {
             const response = await axios.delete('https://c2se-14-sts-api.onrender.com/api/locations', {
                 data: {
@@ -185,7 +189,6 @@ const StatisticsPage = () => {
                 }
             });
             console.log(response.data);
-            // Xóa các địa điểm đã chọn khỏi danh sách hiển thị và cập nhật biểu đồ
             fetchData();
             setSelectedBases([]);
             setSelectedLocations([]);
@@ -194,21 +197,22 @@ const StatisticsPage = () => {
         }
     };
 
-    
-
     const handleStartDateChange = (event) => {
         const date = new Date(event.target.value);
         setStartDate(date);
-        
+
+        updateChart();
+    };
+    const handleEndDateChange = (event) => {
+        const selectedEndDate = new Date(event.target.value);
+        if (selectedEndDate < startDate) {
+            console.error("Ngày kết thúc không thể nhỏ hơn ngày bắt đầu.");
+            return;
+        }
+        setEndDate(selectedEndDate);
         updateChart();
     };
 
-    const handleEndDateChange = (event) => {
-        const date = new Date(event.target.value);
-        setEndDate(date);
-        
-        updateChart();
-    };
 
     const handleAddBase = () => {
         setShowAddBaseModal(true);
@@ -218,7 +222,7 @@ const StatisticsPage = () => {
         setData(prevData => [...prevData, newData]); // Thêm dữ liệu mới vào data
         updateChart(); // Cập nhật biểu đồ
     };
-    
+
 
     const handleAddNewBase = async () => {
         if (newBaseName.trim() !== '') {
@@ -228,11 +232,11 @@ const StatisticsPage = () => {
                     location_name: newBaseName.trim()
                 });
                 console.log('New location added:', response.data);
-                
+
                 // Cập nhật danh sách địa điểm và các cơ sở đã chọn
                 fetchData(); // Cập nhật danh sách địa điểm
                 setSelectedBases(prevSelectedBases => [...prevSelectedBases, newBaseName.trim()]); // Thêm cơ sở mới vào danh sách đã chọn
-                
+
                 // Đặt lại trạng thái của modal và tên cơ sở mới
                 setShowAddBaseModal(false);
                 setNewBaseName('');
@@ -241,13 +245,20 @@ const StatisticsPage = () => {
             }
         }
     };
-    
+
 
     const handleCancelAddBase = () => {
         setShowAddBaseModal(false);
         setNewBaseName('');
     };
     const handleExport = () => {
+        // Kiểm tra xem có dữ liệu nào được chọn hay không
+        if (selectedBases.length === 0 || !startDate || !endDate) {
+            // Hiển thị thông báo lỗi và yêu cầu chọn dữ liệu trước
+            toast.error('Vui lòng chọn ít nhất một cơ sở và khoảng thời gian trước khi xuất file.');
+            return;
+        }
+
         // Tạo workbook mới
         const workbook = XLSX.utils.book_new();
 
@@ -275,8 +286,11 @@ const StatisticsPage = () => {
             const worksheet = XLSX.utils.aoa_to_sheet(worksheetData);
             XLSX.utils.book_append_sheet(workbook, worksheet, base);
         });
+
+        // Xuất file
         XLSX.writeFile(workbook, 'statistics.xlsx');
     };
+
     return (
         <div className="grid grid-cols-12 gap-10">
             {/* Sidebar */}
@@ -317,30 +331,33 @@ const StatisticsPage = () => {
                     </div>
                 </div>
                 </div>
-                <div className="mt-8 flex justify-center">
-                    <div className="flex items-center mr-4">
+                <div className="mt-8 flex ">
+                    <div className="flex mt-4 items-start ">
                         <label htmlFor="startDate" className="mr-2 font-bold">Ngày bắt đầu:</label>
                         <input type="date" id="startDate" onChange={handleStartDateChange} value={startDate ? startDate.toISOString().split('T')[0] : ''} />
                     </div>
-                    <div className="flex items-center mx-44">
+                    <div className="flex  items-center mx-36">
                         <label htmlFor="endDate" className="mr-2 font-bold">Ngày kết thúc:</label>
-                        <input  type="date" id="endDate" onChange={handleEndDateChange} value={endDate ? endDate.toISOString().split('T')[0] : ''} />
+                        {/* Hiển thị input ngày kết thúc chỉ khi ngày bắt đầu đã được chọn */}
+                        {startDate && (
+                            <input  type="date" id="endDate" onChange={handleEndDateChange} value={endDate ? endDate.toISOString().split('T')[0] : ''} />
+                        )}
                     </div>
-                    <div className="text-center text-xl">
-                        <p><FontAwesomeIcon  icon={faDatabase} /> : {selectedBases.length}</p>
-                    </div>
-                    <div className="flex items-center ml-4">
+
+
+                    <div className="flex items-end ml-4">
                         <button
                         onClick={handleExport}
-                            className="flex items-center w-[90px] h-[50px] text-xl p-2 border rounded   hover:bg-blue-300"
+                            className="flex items-center w-[150px] h-[50px] text-xl p-2 border rounded   hover:bg-blue-300"
                         >
                             <FontAwesomeIcon icon={faFileExport} className="mr-2" />
                             Xuất File
+                            <ToastContainer />
                         </button>
                     </div>
                 </div>
                 {/* Chart */}
-                <div className="w-[850px] mt-8">
+                <div className="mx-8 w-[780px] mt-8">
                     <canvas id="myChart" width="800" height="400"></canvas>
                 </div>
                 {showAddBaseModal && (

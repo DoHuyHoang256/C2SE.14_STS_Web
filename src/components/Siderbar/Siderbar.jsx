@@ -5,19 +5,16 @@ import {
     faUser,
     faBarcode,
     faPeopleRoof,
-    faAddressBook,
-    faRightFromBracket,
-    faChevronDown,
     faAddressCard,
+    faChevronDown,
+    faRightFromBracket,
 } from "@fortawesome/free-solid-svg-icons";
 
 const Sidebar = () => {
     const [dropdownStates, setDropdownStates] = useState({
         userDropdown: false,
-        petDropdown: false,
-        contactDropdown: false,
+        statisticDropdown: false,
         accountDropdown: false,
-        statisticDropdown: false // Thêm trạng thái cho dropdown "Thống kê"
     });
 
     const toggleDropdown = (dropdownName) => {
@@ -27,10 +24,6 @@ const Sidebar = () => {
         }));
     };
 
-    const handleSidebarClick = (event) => {
-        event.stopPropagation();
-    };
-
     const router = useLocation();
 
     return (
@@ -38,7 +31,7 @@ const Sidebar = () => {
             id="sidebar-multi-level-sidebar"
             className="top-0 left-0 z-40 w-74 h-screen transition-transform -translate-x-full drop-shadow-lg sm:translate-x-0"
             aria-label="Sidebar"
-            onClick={handleSidebarClick}
+            onClick={(event) => event.stopPropagation()}
         >
             <div className="h-full px-4 py-4 overflow-y-auto bg-white border-r-2 border-r-gray-200 rounded-2xl">
                 <div className="flex items-center space-x-2 mb-4">
@@ -57,26 +50,31 @@ const Sidebar = () => {
                 </div>
                 <ul className="space-y-4 font-medium p-4">
                     <li>
-                        <button
-                            className="flex items-center w-full p-2 text-base text-gray-900 transition duration-75 rounded-lg group hover:bg-gray-100"
-                            onClick={() => toggleDropdown("userDropdown")}
-                        >
-                            <FontAwesomeIcon icon={faUser} className="text-primaryColor" />
-                            <span className="flex-1 ml-3 text-left whitespace-nowrap">Tài khoản của tôi</span>
-                            <FontAwesomeIcon icon={faChevronDown} />
-                        </button>
-                        <ul className={`${dropdownStates.userDropdown || router.pathname.includes("/profile") ? "block" : "hidden"}`}>
-                            <li>
-                                <Link to="/profile" className={`${router.pathname === "/profile" ? "text-primaryColor" : "text-gray-500"} flex items-center w-full p-2 transition duration-75 rounded-lg pl-11 group hover:bg-gray-100`}>
-                                    <FontAwesomeIcon className="mx-2" icon={faAddressCard} /> Hồ sơ
-                                </Link>
-                            </li>
-                            <li>
-                                <Link to="/forgot-password" className={`${router.pathname === "/profile/change-password" ? "text-primaryColor" : "text-gray-500"} flex items-center w-full p-2 text-gray-500 transition duration-75 rounded-lg pl-11 group hover:bg-gray-100`}>
-                                    Đổi mật khẩu
-                                </Link>
-                            </li>
-                        </ul>
+                        <li>
+                            <Link to="/profile" className={`${router.pathname === "/profile" ? "text-primaryColor" : "text-gray-500"} flex items-center w-full p-2 transition duration-75 rounded-lg pl-11 group hover:bg-gray-100`}>
+                                <FontAwesomeIcon className="mx-2" icon={faAddressCard} /> Hồ sơ
+                            </Link>
+                        </li>
+                        {/*<button*/}
+                        {/*    className="flex items-center w-full p-2 text-base text-gray-900 transition duration-75 rounded-lg group hover:bg-gray-100"*/}
+                        {/*    onClick={() => toggleDropdown("userDropdown")}*/}
+                        {/*>*/}
+                        {/*    <FontAwesomeIcon icon={faUser} className="text-primaryColor" />*/}
+                        {/*    <span className="flex-1 ml-3 text-left whitespace-nowrap">Tài khoản của tôi</span>*/}
+                        {/*    <FontAwesomeIcon icon={faChevronDown} />*/}
+                        {/*</button>*/}
+                        {/*<ul className={`${dropdownStates.userDropdown || router.pathname.includes("/profile") ? "block" : "hidden"}`}>*/}
+                        {/*    <li>*/}
+                        {/*        <Link to="/profile" className={`${router.pathname === "/profile" ? "text-primaryColor" : "text-gray-500"} flex items-center w-full p-2 transition duration-75 rounded-lg pl-11 group hover:bg-gray-100`}>*/}
+                        {/*            <FontAwesomeIcon className="mx-2" icon={faAddressCard} /> Hồ sơ*/}
+                        {/*        </Link>*/}
+                        {/*    </li>*/}
+                        {/*    <li>*/}
+                        {/*        <Link to="/forgot-password" className={`${router.pathname === "/profile/change-password" ? "text-primaryColor" : "text-gray-500"} flex items-center w-full p-2 text-gray-500 transition duration-75 rounded-lg pl-11 group hover:bg-gray-100`}>*/}
+                        {/*            Đổi mật khẩu*/}
+                        {/*        </Link>*/}
+                        {/*    </li>*/}
+                        {/*</ul>*/}
                     </li>
 
                     <li>
@@ -85,13 +83,13 @@ const Sidebar = () => {
                             onClick={() => toggleDropdown("statisticDropdown")}
                         >
                             <FontAwesomeIcon icon={faBarcode} />
-                            <span className="flex-1 ml-12 text-left whitespace-nowrap">Thống kê</span>
+                            <span className="flex-1 ml-4 text-left whitespace-nowrap">Thống kê</span>
                             <FontAwesomeIcon icon={faChevronDown} />
                         </button>
                         <ul className={`${dropdownStates.statisticDropdown || router.pathname.includes("/statistical") ? "block" : "hidden"}`}>
                             <li>
                                 <Link to="/statistical" className={`${router.pathname.includes("/statistical") ? "text-primaryColor" : "text-gray-500"} flex items-center w-full p-2 transition duration-75 rounded-lg pl-11 group hover:bg-gray-100`}>
-                                    Số xe
+                                    Số Xe
                                 </Link>
                             </li>
                             <li>
@@ -108,39 +106,23 @@ const Sidebar = () => {
                             onClick={() => toggleDropdown("accountDropdown")}
                         >
                             <FontAwesomeIcon icon={faPeopleRoof} className="text-primaryColor" />
-                            <Link to="/admin/manager-account" className={`${router.pathname.includes("/admin/manager-account") ? "text-primaryColor" : "text-gray-500"} flex items-center w-full transition duration-75 rounded-lg pl-11 group hover:bg-gray-100`}>
-                                <span className="flex-1  text-left whitespace-nowrap">Quản lý tài khoản</span>
-                            </Link>
+                            <span className="flex-1 mx-4 text-left whitespace-nowrap">Quản Lý</span>
+                            <FontAwesomeIcon icon={faChevronDown} />
                         </button>
-                    </li>
+                        <ul className={`${dropdownStates.accountDropdown || router.pathname.includes("/account") ? "block" : "hidden"}`}>
 
-                    {/*<li>*/}
-                    {/*    <button*/}
-                    {/*        className="flex items-center w-full p-2 text-base text-gray-900 transition duration-75 rounded-lg group hover:bg-gray-100"*/}
-                    {/*        onClick={() => toggleDropdown("contactDropdown")}*/}
-                    {/*    >*/}
-                    {/*        <FontAwesomeIcon icon={faAddressBook} className="text-primaryColor" />*/}
-                    {/*        <span className="flex-1 ml-3 text-left whitespace-nowrap">Contact</span>*/}
-                    {/*        <FontAwesomeIcon icon={faChevronDown} />*/}
-                    {/*    </button>*/}
-                    {/*    <ul className={`${dropdownStates.contactDropdown || router.pathname.includes("vet/pet") ? "block" : "hidden"}`}>*/}
-                    {/*        <li>*/}
-                    {/*            <Link to="/vet/pets" className={`${router.pathname.includes("/vet/pets") ? "text-primaryColor" : "text-gray-500"} flex items-center w-full p-2 transition duration-75 rounded-lg pl-11 group hover:bg-gray-100`}>*/}
-                    {/*                Email*/}
-                    {/*            </Link>*/}
-                    {/*        </li>*/}
-                    {/*        <li>*/}
-                    {/*            <Link to="/vet/pets" className={`${router.pathname.includes("/vet/pet-advice") ? "text-primaryColor" : "text-gray-500"} flex items-center w-full p-2 text-gray-500 transition duration-75 rounded-lg pl-11 group hover:bg-gray-100`}>*/}
-                    {/*                Phone*/}
-                    {/*            </Link>*/}
-                    {/*        </li>*/}
-                    {/*        <li>*/}
-                    {/*            <Link to="/vet/pets" className={`${router.pathname.includes("/vet/pet-advice") ? "text-primaryColor" : "text-gray-500"} flex items-center w-full p-2 text-gray-500 transition duration-75 rounded-lg pl-11 group hover:bg-gray-100`}>*/}
-                    {/*                Website*/}
-                    {/*            </Link>*/}
-                    {/*        </li>*/}
-                    {/*    </ul>*/}
-                    {/*</li>*/}
+                            <li>
+                                <Link to="/admin/manager-account" className={`${router.pathname.includes("/admin/manager-account") ? "text-primaryColor" : "text-gray-500"} text-gray-500 flex items-center w-full p-2 transition duration-75 rounded-lg pl-11 group hover:bg-gray-100`}>
+                                    Danh Sách Tài Khoản
+                                </Link>
+                            </li>
+                            <li>
+                                <Link to="/admin/list-of-location" className={`${router.pathname.includes("/admin/manager-account") ? "text-primaryColor" : "text-gray-500"} text-gray-500 flex items-center w-full p-2 transition duration-75 rounded-lg pl-11 group hover:bg-gray-100`}>
+                                    Danh Sách Cơ Sở
+                                </Link>
+                            </li>
+                        </ul>
+                    </li>
 
                     <li>
                         <button className="flex items-center w-full p-2 text-base text-gray-900 transition duration-75 rounded-lg group hover:bg-gray-100">
@@ -148,7 +130,6 @@ const Sidebar = () => {
                                 <FontAwesomeIcon icon={faRightFromBracket} />
                                 <span className="flex-1 ml-3 text-left whitespace-nowrap">Đăng xuất</span>
                             </Link>
-
                         </button>
                     </li>
                 </ul>
