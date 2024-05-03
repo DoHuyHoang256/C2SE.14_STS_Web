@@ -219,21 +219,6 @@ const handleSaveNewLocation = () => {
                 console.error('Error saving changes:', error);
             });
     };
-
-    const openNoteModal = (id) => {
-        // Tìm cơ sở có id tương ứng
-        const baseToUpdate = bases.find(base => base.id === id);
-        if (baseToUpdate) {
-            // Cập nhật thông tin cơ sở cần nhập ghi chú
-            setNewLocationInfo({
-                id: baseToUpdate.id,
-                name: baseToUpdate.name,
-                note: baseToUpdate.note // Đặt giá trị ban đầu cho ghi chú từ cơ sở hiện có
-            });
-            // Mở modal
-            setShowModal(true);
-        }
-    };
     return (
         <div className="bg-white w-full h-full px-8">
             <div className="grid grid-cols-12 gap-10">
@@ -276,12 +261,10 @@ const handleSaveNewLocation = () => {
                                             />
                                         </td>
                                         <td className="p-2 border">
-                                            {/* Thay đổi kích thước cột và cho phép xuống dòng */}
                                             <input
                                                 type="text"
-                                                value={base.note}
-                                                onChange={(e) => handleNoteChange(base.id, e.target.value)}
-                                                
+                                                value={base.note} // Thêm value cho cột Ghi chú
+                                                onChange={(e) => handleNoteChange(base.id, e.target.value)} // Thêm hàm xử lý sự thay đổi của cột Ghi chú
                                             />
                                         </td>
                                         <td className="p-2 border">
@@ -301,7 +284,6 @@ const handleSaveNewLocation = () => {
                                                 type="number"
                                                 value={base.cost}
                                                 onChange={(e) => handleCostChange(base.id, e.target.value)}
-                                                style={{ width: 60, wordWrap: "break-word" }}
                                             />
                                         </td>
                                         <td className="p-2 border">
