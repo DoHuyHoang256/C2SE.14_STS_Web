@@ -167,7 +167,6 @@ const DetailUserAccount = () => {
                     <h1 className="text-2xl font-bold">Thông tin chi tiết </h1>
                 </div>
                 <div className="mb-4 flex flex-col items-center">
-                    {/*<h1 className="text-2xl font-medium text-gray-800 p-2 mb-6">Ảnh đại diện</h1>*/}
                     <img
                         src={detailUser.avatar || "https://vnn-imgs-a1.vgcloud.vn/image1.ictnews.vn/_Files/2020/03/17/trend-avatar-1.jpg"}
                         alt="avatar"

@@ -58,7 +58,6 @@ const ManageUserAccount = () => {
         }
     };
 
-    // Hàm để loại bỏ dấu từ chuỗi
     const removeAccents = (str) => {
         return str.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
     };
@@ -75,12 +74,12 @@ const ManageUserAccount = () => {
     return (
         <div className="bg-[#F3F7FA] w-full h-full p-8">
             <div className="grid grid-cols-12 gap-10">
-                <div className="col-span-3">
+                <div className="col-span-2">
                     <div className="border border-white">
                         <Sidebar />
                     </div> 
                 </div>
-                <div className="col-span-9">
+                <div className="col-span-10">
                     <div className="bg-[#ffff] border border-white p-2 rounded-lg">
                         <div className="mx-auto border border-white p-2">
                             <div className="App p-2 flex items-center justify-between">
@@ -114,11 +113,9 @@ const ManageUserAccount = () => {
                                         <th className="py-2 px-3 border-t text-black border-gray-300 bg-white">Vai trò</th>
                                         <th className="py-2 px-3 border-t text-black border-gray-300 bg-white">Số dư</th>
                                         <th className="py-2 px-3 border-t text-black border-gray-300 bg-white">Tổng giao dịch</th>
-                                        {/*<th className="py-2 px-3 border-t text-black border-gray-300 bg-white">Chi tiết</th>*/}
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {/* Dữ liệu hiển thị từ filteredUsers */}
                                     {filteredUsers.map((user, index) => (
                                         <tr key={index} className="text-gray-500">
                                             <td className="py-2 px-3 border-t text-black border-gray-300 bg-white">{index + 1}</td>
@@ -138,11 +135,6 @@ const ManageUserAccount = () => {
                                                     <FontAwesomeIcon icon={faBuildingColumns} />
                                                 </Link>
                                             </td>
-                                            {/*<td className="py-2 px-8 text-xl border-t border-gray-300 bg-white">*/}
-                                            {/*    <Link to={`/admin/detail-account/${user.user_id}`}>*/}
-                                            {/*        <FontAwesomeIcon icon={faCircleInfo} />*/}
-                                            {/*    </Link>*/}
-                                            {/*</td>*/}
                                         </tr>
                                     ))}
                                 </tbody>
