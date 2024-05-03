@@ -18,7 +18,7 @@ const StatisticsPage = () => {
     const [data, setData] = useState([]);
     const chartRef = useRef(null);
     const [selectedBases, setSelectedBases] = useState([]);
-    const [startDate, setStartDate] = useState(null); // Ensure startDate is initialized as a Date object
+    const [startDate, setStartDate] = useState(null);
     const [endDate, setEndDate] = useState(null);
     const [numberOfDays, setNumberOfDays] = useState(0);
     const [showAddBaseModal, setShowAddBaseModal] = useState(false);
@@ -36,27 +36,26 @@ const StatisticsPage = () => {
         try {
             const response = await axios.get('https://c2se-14-sts-api.onrender.com/api/transactions/count', {
                 params: {
-                    startDate: startDate,
-                    endDate: endDate,
+                    startDate: startDate ? formatDate(startDate) : null, // Chuyển ngày thành định dạng phù hợp
+                    endDate: endDate ? formatDate(endDate) : null, // Chuyển ngày thành định dạng phù hợp
                     location: selectedLocations.join(',')
                 }
             });
             const formattedData = response.data.map(item => ({
                 name: item.location_name,
                 label: formatDate(item.transaction_date),
-                value: { [item.location_name]: parseInt(item.total_transactions) },
+                value: parseInt(item.total_transactions),
             }));
             setData(formattedData);
-            console.log(data);
-
-            // Hiển thị thông báo toast khi tải dữ liệu thành công
-           // toast.success('Dữ liệu đã được tải thành công!');
+            console.log(formattedData); // Kiểm tra dữ liệu nhận được từ API
         } catch (error) {
             console.error('Error fetching data:', error);
             // Hiển thị thông báo toast khi có lỗi xảy ra
             toast.error('Đã xảy ra lỗi khi tải dữ liệu.');
         }
     };
+
+
 
 
     useEffect(() => {
@@ -79,9 +78,8 @@ const StatisticsPage = () => {
     };
 
     useEffect(() => {
-        fetchData();
-    }, []);
-
+        updateChart();
+    }, [data])
     useEffect(() => {
     console.log('Locations:', locations);
 }, [locations]);
@@ -102,7 +100,6 @@ const StatisticsPage = () => {
 
     const updateChart = () => {
         const ctx = document.getElementById('myChart');
-
 
         if (chartRef.current) {
             chartRef.current.destroy();
@@ -134,7 +131,8 @@ const StatisticsPage = () => {
                     label: base,
                     data: labels.map(date => {
                         const foundData = filteredData.find(item => item.label === date);
-                        return foundData ? foundData.value[base] : 0; // Trả về giá trị của cơ sở tại ngày hiện tại hoặc 0 nếu không tìm thấy
+                        console.log("data" +  foundData);
+                        return foundData ? parseInt(foundData.value) || 0 : 0;
                     }),
                     backgroundColor: colors[index % colors.length],
                     borderColor: colors[index % colors.length].replace('0.2', '2'),
@@ -161,6 +159,8 @@ const StatisticsPage = () => {
         }
     };
 
+
+
     const handleBaseChange = (event, baseId) => {
         const selectedBaseName = locations.find(location => location.location_id === baseId)?.location_name;
         const isChecked = event.target.checked;
@@ -181,21 +181,6 @@ const StatisticsPage = () => {
 
     };
 
-    const handleDeleteSelectedLocations = async () => {
-        try {
-            const response = await axios.delete('https://c2se-14-sts-api.onrender.com/api/locations', {
-                data: {
-                    selectedLocations: selectedLocations
-                }
-            });
-            console.log(response.data);
-            fetchData();
-            setSelectedBases([]);
-            setSelectedLocations([]);
-        } catch (error) {
-            console.error('Error deleting selected locations:', error);
-        }
-    };
 
     const handleStartDateChange = (event) => {
         const date = new Date(event.target.value);
@@ -218,51 +203,17 @@ const StatisticsPage = () => {
         setShowAddBaseModal(true);
     };
 
-    const updateChartData = (newData) => {
-        setData(prevData => [...prevData, newData]); // Thêm dữ liệu mới vào data
-        updateChart(); // Cập nhật biểu đồ
-    };
-
-
-    const handleAddNewBase = async () => {
-        if (newBaseName.trim() !== '') {
-            try {
-                // Gửi yêu cầu POST để thêm địa điểm mới
-                const response = await axios.post('https://c2se-14-sts-api.onrender.com/api/locations', {
-                    location_name: newBaseName.trim()
-                });
-                console.log('New location added:', response.data);
-
-                // Cập nhật danh sách địa điểm và các cơ sở đã chọn
-                fetchData(); // Cập nhật danh sách địa điểm
-                setSelectedBases(prevSelectedBases => [...prevSelectedBases, newBaseName.trim()]); // Thêm cơ sở mới vào danh sách đã chọn
-
-                // Đặt lại trạng thái của modal và tên cơ sở mới
-                setShowAddBaseModal(false);
-                setNewBaseName('');
-            } catch (error) {
-                console.error('Error adding new location:', error);
-            }
-        }
-    };
-
 
     const handleCancelAddBase = () => {
         setShowAddBaseModal(false);
         setNewBaseName('');
     };
     const handleExport = () => {
-        // Kiểm tra xem có dữ liệu nào được chọn hay không
         if (selectedBases.length === 0 || !startDate || !endDate) {
-            // Hiển thị thông báo lỗi và yêu cầu chọn dữ liệu trước
             toast.error('Vui lòng chọn ít nhất một cơ sở và khoảng thời gian trước khi xuất file.');
             return;
         }
-
-        // Tạo workbook mới
         const workbook = XLSX.utils.book_new();
-
-        // Tạo mảng tất cả các ngày trong khoảng thời gian đã chọn
         const allDates = [];
         let currentDate = new Date(startDate);
         while (currentDate <= endDate) {
@@ -287,13 +238,11 @@ const StatisticsPage = () => {
             XLSX.utils.book_append_sheet(workbook, worksheet, base);
         });
 
-        // Xuất file
         XLSX.writeFile(workbook, 'statistics.xlsx');
     };
 
     return (
         <div className="grid grid-cols-12 gap-10">
-            {/* Sidebar */}
             <div className="col-span-3">
                 <div className="border border-white h-screen flex flex-col justify-between">
                     <Sidebar />
@@ -319,17 +268,7 @@ const StatisticsPage = () => {
                     </div>
                 ))}
                 </div>
-                <div className="flex">
-                    <div className="mr-2 bg-[#212143] w-[40px] rounded-e mb-2 text-center flex items-center justify-center">
-                        <button className="text-xl font-bold text-white" onClick={handleAddBase}><FontAwesomeIcon icon={faPlus} /></button>
-                    </div>
-                    <div className="bg-[#212143] w-[40px] rounded-e mr-2 mb-2 text-center flex items-center justify-center">
-                        {/* <button className="text-xl text-white font-bold text-center"  onClick={handleBaseChange}><FontAwesomeIcon className="text-xl mx-2 text-white" icon={faTrashCan} /></button> */}
-                        <button className="text-xl text-white font-bold text-center" onClick={handleDeleteSelectedLocations}>
-                            <FontAwesomeIcon className="text-xl mx-2 text-white" icon={faTrashCan} />
-                        </button>
-                    </div>
-                </div>
+
                 </div>
                 <div className="mt-8 flex ">
                     <div className="flex mt-4 items-start ">
@@ -338,7 +277,6 @@ const StatisticsPage = () => {
                     </div>
                     <div className="flex  items-center mx-36">
                         <label htmlFor="endDate" className="mr-2 font-bold">Ngày kết thúc:</label>
-                        {/* Hiển thị input ngày kết thúc chỉ khi ngày bắt đầu đã được chọn */}
                         {startDate && (
                             <input  type="date" id="endDate" onChange={handleEndDateChange} value={endDate ? endDate.toISOString().split('T')[0] : ''} />
                         )}

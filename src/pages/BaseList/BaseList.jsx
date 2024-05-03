@@ -248,12 +248,12 @@ const handleSaveNewLocation = () => {
                             <h1 className="text-2xl font-bold">Danh Sách Cơ Sở </h1>
                         </div>
                         <button 
-                                className="ml-auto bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded"
+                                className="ml-auto bg-green-500 hover:bg-green-700 text-white font-bold mb-8  py-2 px-4 rounded"
                                 onClick={openModal} // Khi nhấn vào nút "+ New Location" mở modal
                             >
                                 + Cơ sở mới
                         </button>
-                        <table className="w-full border-collapse border">
+                        <table className=" mb-4 p-4 w-full border-collapse border">
                             <thead>
                                 <tr className="bg-gray-200">
                                     <th className="p-2 border w-1/6">STT</th>
