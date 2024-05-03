@@ -107,7 +107,7 @@ const BaseList = () => {
             )
         );
     };
-   
+
     // Hàm để mở modal
     const openModal = () => {
         setShowModal(true);
@@ -183,39 +183,26 @@ const handleSaveNewLocation = () => {
         });
 };
 
-    
-
     const handleSaveChanges = () => {
-        console.log('Changes saved successfully:', bases); // Hiển thị thông tin lưu ra console
-    
-        // Tạo một mảng promises chứa các promise cho mỗi yêu cầu cập nhật
+        console.log('Changes saved successfully:', bases);
         const updatePromises = bases.map(base => {
-            // Truy cập các trường thông tin cần thay đổi từ base
             const { id, name, account, cost, status, note } = base;
-    
-            // Dữ liệu cần gửi đến API để cập nhật
             const dataToUpdate = {
-                name: name, // hoặc chỉ cần viết name vì tên biến và tên trường giống nhau
+                name: name,
                 account: account,
                 cost: cost,
                 status: status,
                 note : note
             };
-    
-            // Trả về promise của yêu cầu cập nhật
             return axios.patch('https://c2se-14-sts-api.onrender.com/api/locations/' + id, dataToUpdate);
         });
-    
-        // Sử dụng Promise.all để chờ cho tất cả các promise được giải quyết
         Promise.all(updatePromises)
             .then(responses => {
-                // Nếu tất cả các promise đều được giải quyết thành công, hiển thị thông báo thành công
-                toast.success('All changes saved successfully.', { autoClose: 3000 });
+                toast.success('Lưu thay đổi thành công !.', { autoClose: 3000 });
                 console.log('All changes saved successfully:', responses.map(response => response.data));
             })
             .catch(error => {
-                // Nếu có ít nhất một promise bị lỗi, hiển thị thông báo lỗi
-                toast.error('Error saving changes.', { autoClose: 3000 });
+                toast.error('Lưu thay đổi thất bại !', { autoClose: 3000 });
                 console.error('Error saving changes:', error);
             });
     };
@@ -228,7 +215,7 @@ const handleSaveNewLocation = () => {
             setNewLocationInfo({
                 id: baseToUpdate.id,
                 name: baseToUpdate.name,
-                note: baseToUpdate.note // Đặt giá trị ban đầu cho ghi chú từ cơ sở hiện có
+                note: baseToUpdate.note
             });
             // Mở modal
             setShowModal(true);
@@ -236,35 +223,35 @@ const handleSaveNewLocation = () => {
     };
     return (
         <div className="bg-white w-full h-full px-8">
-            <div className="grid grid-cols-12 gap-10">
-                <div className="col-span-3">
+            <div className="grid w-full grid-cols-12 gap-10">
+                <div className=" w-[270px] col-span-2">
                     <div className="border border-white">
                         <Sidebar />
                     </div>
                 </div>
-                <div className="col-span-9 bg-[#F5F5F5] p-5 flex flex-col justify-between">
+                <div className="col-span-10  ml-3   bg-[#F5F5F5] p-5 flex flex-col justify-between">
                     <div className=" items-start bg-white w-full h-full p-4">
                         <div className="flex items-center  mb-8">
-                            <h1 className="text-2xl font-bold">Danh Sách Cơ Sở </h1>
+                            <h1 className="text-3xl font-bold">Danh Sách Cơ Sở </h1>
                         </div>
                         <button 
-                                className="ml-auto bg-green-500 hover:bg-green-700 text-white font-bold mb-8  py-2 px-4 rounded"
-                                onClick={openModal} // Khi nhấn vào nút "+ New Location" mở modal
+                                className="ml-auto text-xl bg-[#212143] hover:bg-blue-900 text-white font-bold mb-8  py-2 px-4 rounded"
+                                onClick={openModal}
                             >
-                                + Cơ sở mới
+                                + Thêm cơ sở
                         </button>
-                        <table className=" mb-4 p-4 w-full border-collapse border">
+                        <table className=" text-left text-xl mb-4 p-4 w-full border-collapse border">
                             <thead>
                                 <tr className="bg-gray-200">
-                                    <th className="p-2 border w-1/6">STT</th>
-                                    <th className="p-2 border w-1/6">Cơ sở</th>
-                                    <th className="p-2 border w-1/6">Ghi chú</th>
-                                    <th className="p-2 border w-1/6">Tài khoản</th>
-                                    <th className="p-2 border w-1/6">Chi phí</th>
-                                    <th className="p-2 border w-1/6">Trạng thái</th>
+                                    <th className="p-2 border">STT</th>
+                                    <th className="p-2 border">Cơ sở</th>
+                                    <th className="p-2 border">Ghi chú</th>
+                                    <th className="p-2 border">Tài khoản</th>
+                                    <th className="p-2 border">Chi phí</th>
+                                    <th className="p-2 border">Trạng thái</th>
                                 </tr>
                             </thead>
-                            <tbody className="text-center">
+                            <tbody className="text-left">
                                 {bases.map((base, index) => (
                                     <tr key={base.id}>
                                         <td className="p-2 border">{baseIndex + index}</td>
@@ -284,13 +271,13 @@ const handleSaveNewLocation = () => {
                                                 
                                             />
                                         </td>
-                                        <td className="p-2 border">
+                                        <td className="p-2 border ">
                                             <select
                                                 value={base.account}
                                                 onChange={(e) => handleAccountChange(base.id, e.target.value)}
                                             >
                                                 {emails.map((email) => (
-                                                    <option key={email.user_id} value={email.user_id}>
+                                                    <option className="text-blue-700" key={email.user_id} value={email.user_id}>
                                                         {email.email}
                                                     </option>
                                                 ))}
@@ -301,7 +288,6 @@ const handleSaveNewLocation = () => {
                                                 type="number"
                                                 value={base.cost}
                                                 onChange={(e) => handleCostChange(base.id, e.target.value)}
-                                                style={{ width: 60, wordWrap: "break-word" }}
                                             />
                                         </td>
                                         <td className="p-2 border">
@@ -315,7 +301,7 @@ const handleSaveNewLocation = () => {
                             </tbody>
                         </table>
                         <div className="border items-end border-white py-3">
-                            <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" onClick={handleSaveChanges}>
+                            <button className="bg-blue-500 text-xl hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" onClick={handleSaveChanges}>
                                 Lưu thay đổi
                             </button>
                         </div>
