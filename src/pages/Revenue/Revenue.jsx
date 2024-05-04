@@ -194,7 +194,7 @@ const RevenueUpdate = () => {
                                 <td className="px-4 py-2 w-[25%] border-r border-gray-400">{transaction.full_name}</td>
                                 <td className="px-4 py-2 w-[25%] border-r border-gray-400">{transaction.license_plate}</td>
                                 <td className="px-4 py-2 w-[25%] border-r border-gray-400">{transaction.location_name}</td>
-                                <td className="px-4 py-2 w-[25%] text-green-600">{transaction.amount}</td>
+                                <td className="px-4 py-2 w-[25%] text-green-700">{transaction.amount}</td>
                             </tr>
                         ))}
                         </tbody>
