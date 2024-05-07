@@ -159,6 +159,7 @@ const StatisticsPage = () => {
 
     
 
+
     const handleBaseChange = (event, baseId) => {
         console.log('Handling base change...');
         const selectedBaseName = locations.find(location => location.location_id === baseId)?.location_name;
@@ -221,6 +222,7 @@ const StatisticsPage = () => {
     XLSX.writeFile(workbook, 'statistics.xlsx');
 };
 
+
     return (
         <div className="grid grid-cols-12 gap-10">
             {/* Sidebar */}
@@ -247,7 +249,6 @@ const StatisticsPage = () => {
                             {location.location_name}
                         </label>
                     </div>
-                ))}
                 </div>
                 </div>
                 <div className="mt-8 flex ">

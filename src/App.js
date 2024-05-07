@@ -33,7 +33,7 @@ function App() {
 	}, []);
 
 	return (
-		<div className="container">
+		<div className="">
 			<Routes>
 				<Route
 					exact
