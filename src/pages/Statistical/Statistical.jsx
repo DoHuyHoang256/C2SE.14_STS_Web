@@ -249,6 +249,7 @@ const StatisticsPage = () => {
                             {location.location_name}
                         </label>
                     </div>
+                ))}
                 </div>
                 </div>
                 <div className="mt-8 flex ">
