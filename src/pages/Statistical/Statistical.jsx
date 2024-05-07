@@ -7,10 +7,11 @@ import vn from 'date-fns/locale/vi';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faDatabase,faTrashCan,faPlus,faFileExport} from "@fortawesome/free-solid-svg-icons";
 import axios from 'axios';
-import { format } from 'date-fns';
+import { format, addDays, subDays } from 'date-fns'; // Thêm addDays từ date-fns
 import * as XLSX from 'xlsx';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+
 
 registerLocale('vi', vn);
 
@@ -18,9 +19,9 @@ const StatisticsPage = () => {
     const [data, setData] = useState([]);
     const chartRef = useRef(null);
     const [selectedBases, setSelectedBases] = useState([]);
-    const [startDate, setStartDate] = useState(null); // Ensure startDate is initialized as a Date object
-    const [endDate, setEndDate] = useState(null);
-    const [numberOfDays, setNumberOfDays] = useState(0);
+    const [startDate, setStartDate] = useState(subDays(new Date(), 5)); // Set default start date to 5 days ago
+    const [endDate, setEndDate] = useState(new Date()); // Set default end date to today
+    const [numberOfDays, setNumberOfDays] = useState(5); // Set default number of days to 5
     const [locations, setLocations] = useState([]);
 
 
@@ -29,13 +30,21 @@ const StatisticsPage = () => {
         return format(date, 'dd-MM-yyyy');
     };
 
+    useEffect(() => {
+        fetchDataFromApi();
+        fetchData();
+    }, [startDate, endDate, selectedBases]);
+
+    useEffect(() => {
+        updateChart();
+    }, [selectedBases, startDate, endDate]);
+
     const fetchDataFromApi = async () => {
         try {
             const response = await axios.get('https://c2se-14-sts-api.onrender.com/api/transactions/count', {
                 params: {
                     startDate: startDate,
                     endDate: endDate,
-                    location: selectedBases.join(',')
                 }
             });
             const formattedData = {};
@@ -45,13 +54,19 @@ const StatisticsPage = () => {
                     formattedData[date] = {};
                 }
                 formattedData[date][item.location_name] = parseInt(item.total_transactions);
+                
             });
             setData(formattedData);
+
+            console.log('Data from API:', formattedData);
+            // In dữ liệu nhận được từ API lên console
+           
         } catch (error) {
             console.error('Error fetching data:', error);
             toast.error('Đã xảy ra lỗi khi tải dữ liệu.');
         }
     };
+    
     
 
 
@@ -68,7 +83,7 @@ const StatisticsPage = () => {
         try {
             const response = await axios.get('https://c2se-14-sts-api.onrender.com/api/locations');
             setLocations(response.data);
-            console.log('Locations:', response.data);
+            // console.log('Locations:', response.data);
         } catch (error) {
             console.error('Error fetching locations:', error);
         }
@@ -79,8 +94,9 @@ const StatisticsPage = () => {
     }, []);
 
     useEffect(() => {
-    console.log('Locations:', locations);
-}, [locations]);
+        // console.log('Locations:', locations);
+    }, [locations]);
+
 
     const colors = [
         'rgba(255, 99, 132, 0.2)',
@@ -99,19 +115,19 @@ const StatisticsPage = () => {
     const updateChart = () => {
         console.log('Updating chart...');
         const ctx = document.getElementById('myChart');
-
+    
         if (!startDate || !endDate) {
             console.error("Ngày bắt đầu hoặc ngày kết thúc không được để trống.");
             return;
         }
-
+    
         if (chartRef.current) {
             chartRef.current.destroy();
         }
-
+    
         const allDates = [];
         const datasets = [];
-
+    
         // Tạo mảng tất cả các ngày từ startDate đến endDate
         let currentDate = new Date(startDate);
         const endDateObj = new Date(endDate);
@@ -120,21 +136,23 @@ const StatisticsPage = () => {
             allDates.push(dateString);
             currentDate.setDate(currentDate.getDate() + 1);
         }
-
+    
         // Tạo dataset cho từng địa điểm được chọn
         selectedBases.forEach((base, index) => {
+            const dataForBase = allDates.map(date => data[date]?.[base] || 0);
+            console.log(`Data for ${base}:`, dataForBase);
             const dataset = {
                 label: base,
-                data: allDates.map(date => data[date]?.[base] || 0),
+                data: dataForBase,
                 backgroundColor: colors[index % colors.length],
                 borderColor: colors[index % colors.length].replace('0.2', '2'),
                 borderWidth: 1,
             };
             datasets.push(dataset);
         });
-
+    
         console.log('Datasets:', datasets);
-
+    
         chartRef.current = new Chart(ctx, {
             type: 'bar',
             data: {
@@ -151,25 +169,32 @@ const StatisticsPage = () => {
                 categorySpacing: 8,
             },
         });
-
+    
         const diffInTime = endDateObj.getTime() - startDate.getTime();
         const diffInDays = diffInTime / (1000 * 3600 * 24);
         setNumberOfDays(diffInDays);
     };
+    
 
     
 
 
     const handleBaseChange = (event, baseId) => {
         console.log('Handling base change...');
-        const selectedBaseName = locations.find(location => location.location_id === baseId)?.location_name;
+        const selectedBase = locations.find(location => location.location_id === baseId);
+        if (!selectedBase) {
+            console.error('Không tìm thấy địa điểm với ID đã chọn.');
+            return;
+        }
+        
         const isChecked = event.target.checked;
         if (isChecked) {
-            setSelectedBases(prevSelectedBases => [...prevSelectedBases, selectedBaseName]);
+            setSelectedBases(prevSelectedBases => [...prevSelectedBases, selectedBase.location_name]);
         } else {
-            setSelectedBases(prevSelectedBases => prevSelectedBases.filter(base => base !== selectedBaseName));
+            setSelectedBases(prevSelectedBases => prevSelectedBases.filter(base => base !== selectedBase.location_name));
         }
     };
+    
     
     const handleStartDateChange = (event) => {
         const date = new Date(event.target.value);
@@ -253,19 +278,29 @@ const StatisticsPage = () => {
                 </div>
                 </div>
                 <div className="mt-8 flex ">
-                    <div className="flex mt-4 items-start ">
-                        <label htmlFor="startDate" className="mr-2 font-bold">Ngày bắt đầu:</label>
-                        <input type="date" id="startDate" onChange={handleStartDateChange} value={startDate ? startDate.toISOString().split('T')[0] : ''} />
-                    </div>
-                    <div className="flex  items-center mx-36">
+                <div className="flex items-start">
+                    <label htmlFor="startDate" className="mr-2 font-bold">Ngày bắt đầu:</label>
+                    <input
+                        type="date"
+                        id="startDate"
+                        onChange={handleStartDateChange}
+                        value={startDate ? startDate.toISOString().split('T')[0] : ''}
+                        max={endDate ? endDate.toISOString().split('T')[0] : new Date().toISOString().split('T')[0]} // Giới hạn ngày bắt đầu là ngày kết thúc hoặc ngày hiện tại nếu chưa chọn ngày kết thúc
+                    />
+                </div>
+                    <div className="flex items-center mx-36">
                         <label htmlFor="endDate" className="mr-2 font-bold">Ngày kết thúc:</label>
                         {/* Hiển thị input ngày kết thúc chỉ khi ngày bắt đầu đã được chọn */}
                         {startDate && (
-                            <input  type="date" id="endDate" onChange={handleEndDateChange} value={endDate ? endDate.toISOString().split('T')[0] : ''} />
+                            <input
+                                type="date"
+                                id="endDate"
+                                onChange={handleEndDateChange}
+                                value={endDate ? endDate.toISOString().split('T')[0] : ''}
+                                max={new Date().toISOString().split('T')[0]} // Giới hạn ngày kết thúc là ngày hiện tại
+                            />
                         )}
                     </div>
-
-
                     <div className="flex items-end ml-4">
                         <button
                         onClick={handleExport}
