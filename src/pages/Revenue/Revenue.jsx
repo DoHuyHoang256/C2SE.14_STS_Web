@@ -18,38 +18,41 @@ const RevenueUpdate = () => {
     const [revenueData, setRevenueData] = useState({ labels: [], datasets: [] });
     const [showChart, setShowChart] = useState(false);
 
+    // Function to fetch data
+    const fetchData = async () => {
+        try {
+            const response = await axios.get('https://c2se-14-sts-api.onrender.com/api/transaction-summary', {
+                params: {
+                    startDate: startDate.toISOString().split('T')[0],
+                    endDate: endDate.toISOString().split('T')[0]
+                }
+            });
+            const data = response.data;
+            // Extract branch names from transactions
+            const uniqueBranches = Array.from(new Set(data.map(transaction => transaction.location_name)));
+            setBranches(uniqueBranches);
+
+            // Filter out selected branches
+            const filteredData = data.filter(transaction => selectedBranches.includes(transaction.location_name));
+
+            // Create revenueData object
+            const datasets = selectedBranches.map(branch => ({
+                label: branch,
+                data: filteredData.filter(transaction => transaction.location_name === branch).map(transaction => transaction.amount),
+                backgroundColor: '#' + Math.floor(Math.random()*16777215).toString(16), // Random color
+                borderColor: '#' + Math.floor(Math.random()*16777215).toString(16), // Random color
+                borderWidth: 1,
+            }));
+            setRevenueData({ labels: generateLabels(startDate, endDate), datasets });
+            setShowChart(true); // Show chart when data is available
+        } catch (error) {
+            console.error('Error fetching data:', error);
+            setShowChart(false); // Hide chart if there's an error fetching data
+        }
+    };
+
     useEffect(() => {
-        const fetchData = async () => {
-            try {
-                const response = await axios.get('https://c2se-14-sts-api.onrender.com/api/transaction-summary', {
-                    params: {
-                        startDate: startDate.toISOString().split('T')[0],
-                        endDate: endDate.toISOString().split('T')[0]
-                    }
-                });
-                const data = response.data;
-                // Extract branch names from transactions
-                const uniqueBranches = Array.from(new Set(data.map(transaction => transaction.location_name)));
-                setBranches(uniqueBranches);
-
-                // Filter out selected branches
-                const filteredData = data.filter(transaction => selectedBranches.includes(transaction.location_name));
-
-                // Create revenueData object
-                const datasets = selectedBranches.map(branch => ({
-                    label: branch,
-                    data: filteredData.filter(transaction => transaction.location_name === branch).map(transaction => transaction.amount),
-                    backgroundColor: '#' + Math.floor(Math.random()*16777215).toString(16), // Random color
-                    borderColor: '#' + Math.floor(Math.random()*16777215).toString(16), // Random color
-                    borderWidth: 1,
-                }));
-                setRevenueData({ labels: generateLabels(startDate, endDate), datasets });
-                setShowChart(true); // Show chart when data is available
-            } catch (error) {
-                console.error('Error fetching data:', error);
-                setShowChart(false); // Hide chart if there's an error fetching data
-            }
-        };
+        // Fetch data when component mounts or selected branches change
         fetchData();
     }, [startDate, endDate, selectedBranches]);
 
@@ -82,6 +85,12 @@ const RevenueUpdate = () => {
             setSelectedBranches([branches[0]]);
         }
     }, [branches]);
+
+    useEffect(() => {
+        // Automatically select a default start date and end date when the component mounts
+        setStartDate(new Date('2024-04-01'));
+        setEndDate(new Date('2024-04-20'));
+    }, []);
 
     // Generate labels for the selected date range
     const generateLabels = (start, end) => {

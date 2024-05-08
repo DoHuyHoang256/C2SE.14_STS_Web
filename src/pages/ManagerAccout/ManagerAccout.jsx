@@ -70,16 +70,16 @@ const ManageUserAccount = () => {
     const handleDetailClick = (userId) => {
         console.log(userId);
     };
-    
+
     return (
         <div className="bg-[#F3F7FA] w-full h-full p-8">
             <div className="grid grid-cols-12 gap-10">
-                <div className="col-span-2">
+                <div className="col-span-2 w-[290px] h-max">
                     <div className="border border-white">
                         <Sidebar />
-                    </div> 
+                    </div>
                 </div>
-                <div className="col-span-10">
+                <div className=" ml-24 col-span-10">
                     <div className="bg-[#ffff] border border-white p-2 rounded-lg">
                         <div className="mx-auto border border-white p-2">
                             <div className="App p-2 flex items-center justify-between">
