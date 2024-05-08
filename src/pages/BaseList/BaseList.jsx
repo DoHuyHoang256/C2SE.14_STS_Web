@@ -189,7 +189,6 @@ const BaseList = () => {
                 console.error('Error saving changes:', error);
             });
     };
-
     return (
         <div className="bg-white w-full h-full px-8 relative">
             {isOverlayVisible && <div className="fixed inset-0 bg-black opacity-50 z-50"></div>}
