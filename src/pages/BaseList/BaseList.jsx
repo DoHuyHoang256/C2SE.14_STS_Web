@@ -193,12 +193,12 @@ const BaseList = () => {
         <div className="bg-white w-full h-full px-8 relative">
             {isOverlayVisible && <div className="fixed inset-0 bg-black opacity-50 z-50"></div>}
             <div className="grid w-full grid-cols-12 gap-10">
-                <div className="w-[290px] col-span-2">
+                <div className="w-[290px] col-span-2 mb-4">
                     <div className="border border-white">
                         <Sidebar />
                     </div>
                 </div>
-                <div className="col-span-10 ml-5 w-full bg-[#F5F5F5] p-5 flex flex-col justify-between relative">
+                <div className="col-span-10 ml-4 w-full p-4 bg-[#F3F7FA] mb-2 flex flex-col justify-between relative">
                     <div className="items-start ml-2 bg-white w-full h-full p-4">
                         <div className="flex items-center mb-8">
                             <h1 className="text-2xl font-bold">Danh Sách Cơ Sở </h1>

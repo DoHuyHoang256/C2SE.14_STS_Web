@@ -9,7 +9,8 @@ import {
     faChevronDown,
     faRightFromBracket,
 } from "@fortawesome/free-solid-svg-icons";
-
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 const Sidebar = () => {
     const [dropdownStates, setDropdownStates] = useState({
         userDropdown: false,
@@ -25,7 +26,16 @@ const Sidebar = () => {
     };
 
     const router = useLocation();
+    const handleLogout = () => {
+        // Đặt logic đăng xuất ở đây, ví dụ:
+        // Xóa token, xóa thông tin người dùng đăng nhập, vv.
 
+        // Hiển thị thông báo toast
+        toast.success("Bạn đã đăng xuất thành công!");
+
+        // Load lại trang
+        window.location.reload();
+    };
     return (
         <aside
             id="sidebar-multi-level-sidebar"
@@ -50,32 +60,19 @@ const Sidebar = () => {
                 </div>
                 <ul className="space-y-4 font-medium p-4">
                     <li>
-                        <li>
-                            <Link to="/profile" className={`${router.pathname === "/profile" ? "text-primaryColor" : "text-gray-500"} flex items-center w-full p-2 transition duration-75 rounded-lg pl-11 group hover:bg-gray-100`}>
-                                <FontAwesomeIcon className="mx-2" icon={faAddressCard} /> Hồ sơ
+                        <button
+                            className="flex items-center justify-start w-full p-2 text-base text-gray-900 transition duration-75 rounded-lg group hover:bg-gray-100"
+                            onClick={() => toggleDropdown("userDropdown")}
+                        >
+                            <Link to="/profile">
+                                <FontAwesomeIcon icon={faUser} className="text-xl " /> <span className="ml-3 mb-2 text-left whitespace-nowrap">Tài khoản của tôi</span>
+
                             </Link>
-                        </li>
-                        {/*<button*/}
-                        {/*    className="flex items-center w-full p-2 text-base text-gray-900 transition duration-75 rounded-lg group hover:bg-gray-100"*/}
-                        {/*    onClick={() => toggleDropdown("userDropdown")}*/}
-                        {/*>*/}
-                        {/*    <FontAwesomeIcon icon={faUser} className="text-primaryColor" />*/}
-                        {/*    <span className="flex-1 ml-3 text-left whitespace-nowrap">Tài khoản của tôi</span>*/}
-                        {/*    <FontAwesomeIcon icon={faChevronDown} />*/}
-                        {/*</button>*/}
-                        {/*<ul className={`${dropdownStates.userDropdown || router.pathname.includes("/profile") ? "block" : "hidden"}`}>*/}
-                        {/*    <li>*/}
-                        {/*        <Link to="/profile" className={`${router.pathname === "/profile" ? "text-primaryColor" : "text-gray-500"} flex items-center w-full p-2 transition duration-75 rounded-lg pl-11 group hover:bg-gray-100`}>*/}
-                        {/*            <FontAwesomeIcon className="mx-2" icon={faAddressCard} /> Hồ sơ*/}
-                        {/*        </Link>*/}
-                        {/*    </li>*/}
-                        {/*    <li>*/}
-                        {/*        <Link to="/forgot-password" className={`${router.pathname === "/profile/change-password" ? "text-primaryColor" : "text-gray-500"} flex items-center w-full p-2 text-gray-500 transition duration-75 rounded-lg pl-11 group hover:bg-gray-100`}>*/}
-                        {/*            Đổi mật khẩu*/}
-                        {/*        </Link>*/}
-                        {/*    </li>*/}
-                        {/*</ul>*/}
+                        </button>
                     </li>
+
+
+
 
                     <li>
                         <button
@@ -125,7 +122,8 @@ const Sidebar = () => {
                     </li>
 
                     <li>
-                        <button className="flex items-center w-full p-2 text-base text-gray-900 transition duration-75 rounded-lg group hover:bg-gray-100">
+                        <button className="flex items-center w-full p-2 text-base text-gray-900 transition duration-75 rounded-lg group hover:bg-gray-100"
+                        >
                             <Link to="/login" >
                                 <FontAwesomeIcon icon={faRightFromBracket} />
                                 <span className="flex-1 ml-3 text-left whitespace-nowrap">Đăng xuất</span>
