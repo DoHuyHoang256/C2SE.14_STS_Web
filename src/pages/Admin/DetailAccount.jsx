@@ -89,16 +89,16 @@ const DetailUserAccount = () => {
     };
 
     const handleRoleChange = (e) => {
-        const selectedRoleName = e.target.value;
-        const selectedRoleObject = roles.find(role => role.role_name === selectedRoleName);
-        setSelectedRoleId(selectedRoleObject ? selectedRoleObject.role_id : '');
+        const selectedRoleId = e.target.value;
+        setSelectedRoleId(selectedRoleId);
     };
+    
 
     const handleGenderChange = (e) => {
-        const selectedGenderName = e.target.value;
-        const selectedGenderObject = genders.find(gender => gender.gender_name === selectedGenderName);
-        setSelectedGenderId(selectedGenderObject ? selectedGenderObject.gender_id : '');
+        const selectedGenderId = e.target.value;
+        setSelectedGenderId(selectedGenderId);
     };
+    
 
     const handleDateOfBirthChange = (date) => {
         setEditedDateOfBirth(date);
