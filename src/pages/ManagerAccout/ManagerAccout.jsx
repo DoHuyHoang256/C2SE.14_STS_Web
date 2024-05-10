@@ -5,6 +5,9 @@ import { faSearch, faBuildingColumns, faAddressBook,faTimes } from "@fortawesome
 import Sidebar from "../../components/Siderbar/Siderbar";
 import Pagination from "../../components/Pagination/Pagination";
 import { Link } from "react-router-dom";
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
 
 const ManageUserAccount = () => {
     const [users, setUsers] = useState([]);
@@ -13,19 +16,43 @@ const ManageUserAccount = () => {
     const [showAddAccountPage, setShowAddAccountPage] = useState(false);
     const [newAccountData, setNewAccountData] = useState({
         email: "",
-        password: "",
+        full_name: "",
+        gender: "",
+        phone_number: "",
+        address: "",
         role: "",
     });
     const [roles, setRoles] = useState([]);
+    const [selectedRoleId, setSelectedRoleId] = useState('');
+    const [selectedGenderId, setSelectedGenderId] = useState('');
+    const [genders, setGenders] = useState([]);
+
     useEffect(() => {
-        axios.get("https://c2se-14-sts-api.onrender.com/api/roleName")
-            .then(response => {
+        const fetchRoles = async () => {
+            try {
+                const response = await axios.get('https://c2se-14-sts-api.onrender.com/api/roles');
                 setRoles(response.data);
-            })
-            .catch(error => {
+            } catch (error) {
                 console.error('Error fetching roles:', error);
-            });
+            }
+        };
+
+        fetchRoles();
     }, []);
+
+    useEffect(() => {
+        const fetchGenders = async () => {
+            try {
+                const response = await axios.get('https://c2se-14-sts-api.onrender.com/api/gender');
+                setGenders(response.data);
+            } catch (error) {
+                console.error('Error fetching genders:', error);
+            }
+        };
+
+        fetchGenders();
+    }, []);
+
     useEffect(() => {
         axios.get(`https://c2se-14-sts-api.onrender.com/api/search?searchTerm=${searchTerm}&page=${currentPage}`)
             .then(response => {
@@ -98,22 +125,48 @@ const ManageUserAccount = () => {
         }));
     };
 
+
+
     const handleSaveNewAccount = async () => {
         try {
-            const response = await axios.post("https://c2se-14-sts-api.onrender.com/api/users", newAccountData);
-            console.log("Tài khoản đã được tạo thành công:", response.data);
+            // Xử lý logic thêm tài khoản
+            const response = await axios.post("https://c2se-14-sts-api.onrender.com/api/usersAdmin", newAccountData);
+            console.log("Tài khoản mới đã được tạo thành công:", response.data);
             setShowAddAccountPage(false);
             setNewAccountData({
                 email: "",
-                password: "",
+                full_name: "",
+                gender: "",
+                phone_number: "",
+                address: "",
                 role: "",
             });
+            // Refresh user list
+            setCurrentPage(1);
+            // Hiển thị thông báo thành công
+            toast.success('Tài khoản mới đã được tạo thành công');
         } catch (error) {
             console.error("Lỗi khi tạo tài khoản mới:", error);
+            // Hiển thị thông báo lỗi
+            toast.error('Vui lòng nhập đủ thông tin');
         }
     };
 
+
+    const handleRoleChange = (e) => {
+        const selectedRoleId = e.target.value;
+        setSelectedRoleId(selectedRoleId);
+    };
+    
+    const handleGenderChange = (e) => {
+        const selectedGenderId = e.target.value;
+        setSelectedGenderId(selectedGenderId);
+    };
+    
+
     return (
+        <div className="bg-[#F3F7FA] w-full h-full p-8">
+            <ToastContainer />
         <div className="bg-[#F3F7FA] w-full h-full p-8">
             <div className="grid grid-cols-12 gap-10">
                 <div className="col-span-2 w-[290px] h-max">
@@ -136,11 +189,47 @@ const ManageUserAccount = () => {
                                 />
                             </div>
                             <div className="mb-4">
-                                <label className="block text-sm font-medium text-gray-700">Mật khẩu:</label>
+                                <label className="block text-sm font-medium text-gray-700">Họ và tên</label>
                                 <input
-                                    type="password"
-                                    name="password"
-                                    value={newAccountData.password}
+                                    type="text"
+                                    name="full_name"
+                                    value={newAccountData.full_name}
+                                    onChange={handleInputChange}
+                                    className="mt-1 p-2 border rounded w-full"
+                                />
+                            </div>
+                            <div className="mb-4">
+                                <label className="block text-sm font-medium text-gray-700">Giới tính:</label>
+                                <select
+                                    className="w-full p-2 border rounded mb-2"
+                                    value={newAccountData.gender}
+                                    onChange={handleInputChange}
+                                    name="gender"
+                                >
+                                    <option value="">Chọn giới tính</option>
+                                    {genders.map((gender) => (
+                                        <option key={gender.gender_id} value={gender.gender_id}>
+                                            {gender.gender_name}
+                                        </option>
+                                    ))}
+                                </select>
+                            </div>
+                            <div className="mb-4">
+                                <label className="block text-sm font-medium text-gray-700">Số điện thoại:</label>
+                                <input
+                                    type="text"
+                                    name="phone_number"
+                                    value={newAccountData.phone_number}
+                                    onChange={handleInputChange}
+                                    className="mt-1 p-2 border rounded w-full"
+                                />
+                            </div>
+                            <div className="mb-4">
+                                <label className="block text-sm font-medium text-gray-700">Địa chỉ:</label>
+                                <input
+                                    type="text"
+                                    name="address"
+                                    value={newAccountData.address}
                                     onChange={handleInputChange}
                                     className="mt-1 p-2 border rounded w-full"
                                 />
@@ -148,14 +237,16 @@ const ManageUserAccount = () => {
                             <div className="mb-4">
                                 <label className="block text-sm font-medium text-gray-700">Vai trò:</label>
                                 <select
-                                    name="role"
+                                    className="w-full p-2 border rounded mb-2"
                                     value={newAccountData.role}
                                     onChange={handleInputChange}
-                                    className="mt-1 p-2 border rounded w-full"
+                                    name="role"
                                 >
                                     <option value="">Chọn vai trò</option>
-                                    {roles.map(role => (
-                                        <option key={role.id} value={role.id}>{role.name}</option>
+                                    {roles.map((role) => (
+                                        <option key={role.role_id} value={role.role_id}>
+                                            {role.role_name}
+                                        </option>
                                     ))}
                                 </select>
                             </div>
@@ -248,6 +339,7 @@ const ManageUserAccount = () => {
                     )}
                 </div>
             </div>
+        </div>
         </div>
     );
 };

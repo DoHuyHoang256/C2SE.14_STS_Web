@@ -18,7 +18,7 @@ const Login = () => {
   const onSuccess = async (credentialResponse) => {
     try {
       const decoded = jwtDecode(credentialResponse?.credential);
-      const response = await axios.get(`https://c2se-14-sts-api.onrender.com/api/users/email`);
+      const response = await axios.get(`https://c2se-14-sts-api.onrender.com/api/users/emailAdmin`);
       const userEmails = response.data;
 
       if (userEmails.includes(decoded.email)) {

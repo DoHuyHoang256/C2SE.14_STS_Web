@@ -213,21 +213,21 @@ const StatisticsPage = () => {
     
 
     const handleExport = () => {
-    if (selectedBases.length === 0 || !startDate || !endDate) {
+     if (selectedBases.length === 0 || !startDate || !endDate) {
         // Hiển thị thông báo lỗi và yêu cầu chọn dữ liệu trước
         toast.error('Vui lòng chọn ít nhất một cơ sở và khoảng thời gian trước khi xuất file.');
         return;
     }
 
-    const workbook = XLSX.utils.book_new();
-
     const allDates = [];
     let currentDate = new Date(startDate);
     while (currentDate <= endDate) {
-        const dateString = currentDate.toISOString().slice(5, 7) + '-' + currentDate.toISOString().slice(8, 10) + '-' + currentDate.getFullYear();
+        const dateString = currentDate.toISOString().slice(0, 10); // Lấy ngày dưới dạng YYYY-MM-DD
         allDates.push(dateString);
         currentDate.setDate(currentDate.getDate() + 1);
     }
+
+    const workbook = XLSX.utils.book_new();
 
     selectedBases.forEach(base => {
         const worksheetData = [];
@@ -237,12 +237,17 @@ const StatisticsPage = () => {
         allDates.forEach(date => {
             const rowData = [];
             rowData.push(date); // Ngày
-            rowData.push(data[date]?.[base] || 0); // Truy cập trực tiếp dữ liệu từ data
+            const dataIndex = data[date] || {};
+            rowData.push(dataIndex[base] || 0); // Sử dụng dữ liệu từ biểu đồ
             worksheetData.push(rowData);
         });
         const worksheet = XLSX.utils.aoa_to_sheet(worksheetData);
         XLSX.utils.book_append_sheet(workbook, worksheet, base);
     });
+
+    // Hiển thị dữ liệu nhận được lên console
+    const workbookData = XLSX.utils.sheet_to_json(workbook.Sheets[workbook.SheetNames[0]], { header: 1 });
+    console.log('Data received in the workbook:', workbookData);
 
     XLSX.writeFile(workbook, 'statistics.xlsx');
 };
