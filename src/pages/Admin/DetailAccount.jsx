@@ -88,6 +88,20 @@ const DetailUserAccount = () => {
         }));
     };
 
+    const deleteUserAccount = async () => {
+        try {
+            const response = await axios.delete(`https://c2se-14-sts-api.onrender.com/api/users/${userId}`);
+
+            if (response.status === 200) {
+                console.log("Tài khoản đã được xóa thành công!");
+            } else {
+                console.error("Xóa tài khoản không thành công. Mã lỗi:", response.status);
+            }
+        } catch (error) {
+            console.error("Lỗi khi xóa tài khoản:", error);
+        }
+    };
+
     const handleRoleChange = (e) => {
         const selectedRoleId = e.target.value;
         setSelectedRoleId(selectedRoleId);
@@ -123,6 +137,7 @@ const DetailUserAccount = () => {
             console.error("Error saving changes:", error);
         }
     };
+
     const handleAddressChange = (e) => {
         const addressInput = e.target.value;
         const addressParts = addressInput.split(" ");
@@ -140,8 +155,6 @@ const DetailUserAccount = () => {
             address: rearrangedAddress,
         }));
     };
-
-
 
     if (loading) {
         return <Spinner color="blue" />;
@@ -164,7 +177,7 @@ const DetailUserAccount = () => {
                             <FontAwesomeIcon icon={faArrowLeft} />
                         </Link>
                     </div>
-                    <h1 className="text-2xl font-bold">Thông tin chi tiết </h1>
+                    <h1 className="text-2xl font-bold">Thông tin chi tiết</h1>
                 </div>
                 <div className="mb-4 flex flex-col items-center">
                     <img
