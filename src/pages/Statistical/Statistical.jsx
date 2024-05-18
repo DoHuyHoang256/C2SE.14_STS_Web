@@ -245,12 +245,12 @@ const StatisticsPage = () => {
     return (
         <div className="grid grid-cols-12 gap-10">
             {/* Sidebar */}
-            <div className="col-span-3">
-                <div className="border border-white h-screen flex flex-col justify-between">
+            <div className="ml-4 col-span-3">
+                <div className="border border-white h-screen flex w-[#290px] flex-col justify-between">
                     <Sidebar />
                 </div>
             </div>
-            <div className="text-center bg-white w-[1000px] col-span-9 px-4">
+            <div className="text-center bg-white w-[1100px] col-span-9 px-4">
                 <h3 className="py-2 mb-8 w-full text-center bg-[#F3F7FA]">Rất vui được gặp bạn, Hien 👋</h3>
                 <div className="mt-2 flex font-bold bg-[#F5F5F5] p-3 rounded-xl justify-between">
                     <div className="flex h-[90px] text-xl px-2 items-center justify-center">

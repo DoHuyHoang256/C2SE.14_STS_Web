@@ -54,10 +54,10 @@ const Login = () => {
               </Link>
             </motion.div>
             <div className="w-[70%] m-auto">
-              <h1 className="text-primaryColor text-3xl font-bold pt-2 pb-3">
+              <h1 className="text-primaryColor text-4xl font-bold pt-2 pb-2">
                 Đăng Nhập
               </h1>
-              <h1 className="text-base font-normal">
+              <h1 className=" text-2xl  mt-12 font-normal">
                 Chào mừng đến với Smart Tracking System hệ thống quản lý bãi
                 xe của trường đại học Duy Tân
               </h1>

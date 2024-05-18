@@ -43,7 +43,7 @@ const Sidebar = () => {
             aria-label="Sidebar"
             onClick={(event) => event.stopPropagation()}
         >
-            <div className="h-full px-4 py-4 overflow-y-auto bg-white border-r-2 border-r-gray-200 rounded-2xl">
+            <div className="h-full px-4 w-[#290px] py-4 overflow-y-auto bg-white border-r-2 border-r-gray-200 rounded-2xl">
                 <div className="flex items-center space-x-2 mb-4">
                     <div className="bg-gray-200 w-20 h-20 rounded-full overflow-hidden flex items-center justify-center">
                         <img

@@ -110,7 +110,7 @@ const RevenueUpdate = () => {
     useEffect(() => {
         // Automatically set start date 10 days after today
         const newStartDate = new Date();
-        newStartDate.setDate(newStartDate.getDate() - 10);
+        newStartDate.setDate(newStartDate.getDate() - 8);
         setStartDate(newStartDate);
 
         // Automatically select all branches when component mounts for the first time
@@ -131,6 +131,17 @@ const RevenueUpdate = () => {
     };
 
     // Hàm xử lý khi thay đổi trạng thái của một mục
+
+// Sử dụng useEffect để tự động chọn tất cả các cơ sở khi component được tải lần đầu tiên
+    useEffect(() => {
+        // Nếu branches không rỗng và là lần tải đầu tiên, tự động chọn tất cả các cơ sở
+        if (branches.length > 0 && firstLoad) {
+            setSelectedBranches(branches);
+            setFirstLoad(false); // Đặt firstLoad thành false để ngăn tự động chọn ở các lần render sau
+        }
+    }, [branches, firstLoad]);
+
+// Hàm xử lý khi thay đổi trạng thái của một mục
     const handleBranchChange = (e) => {
         const { value, checked } = e.target;
         if (value === "selectAll") {
@@ -147,6 +158,7 @@ const RevenueUpdate = () => {
             );
         }
     };
+
 
 
     // Export data to Excel
@@ -233,7 +245,7 @@ const RevenueUpdate = () => {
                             <FontAwesomeIcon icon={faArrowLeft} />
                         </Link>
                     </div>
-                    <h1 className="text-2xl mt-2 font-bold mb-3"> Danh Thu</h1>
+                    <h1 className="text-2xl mt-2 font-bold mb-3"> Doanh Thu</h1>
                 </div>
                 {/* Branch selection */}
                 <div className="mt-4 flex items-center">
@@ -302,7 +314,7 @@ const RevenueUpdate = () => {
                             <tr key={transaction.id}>
                                 <td className="px-4 py-2 border-r border-gray-400">{index + 1}</td>
                                 <td className="px-4 py-2 border-r border-gray-400">{transaction.full_name}</td>
-                                <td className="px-4 py-2 border-r border-gray-400">{transaction.tran_time}</td>
+                                <td className="px-4 py-2 border-r border-gray-400">{formatDate(transaction.tran_time)}</td>
                                 <td className="px-4 py-2 border-r border-gray-400">{transaction.license_plate}</td>
                                 <td className="px-4 py-2 border-r border-gray-400">{transaction.location_name}</td>
                                 <td className="px-4 py-2 text-green-700">{transaction.amount} VND</td>
