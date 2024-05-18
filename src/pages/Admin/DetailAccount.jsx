@@ -8,6 +8,8 @@ import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import Sidebar from "../../components/Siderbar/Siderbar";
 import { format } from 'date-fns';
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const DetailUserAccount = () => {
     const [detailUser, setDetailUser] = useState({});
@@ -107,7 +109,7 @@ const DetailUserAccount = () => {
     const handleSaveChanges = async () => {
         try {
             const formattedDate = format(editedDateOfBirth, 'yyyy-MM-dd\'T\'HH:mm:ss.SSSxxx');
-            const response = await axios.put(`https://c2se-14-sts-api.onrender.com/users/${userId}`, {
+            const response = await axios.patch(`https://c2se-14-sts-api.onrender.com/api/users/${userId}`, {
                 email: editedUser.email,
                 full_name: editedUser.fullName,
                 phone_number: editedUser.phoneNumber,
@@ -117,12 +119,33 @@ const DetailUserAccount = () => {
                 role: selectedRoleId,
                 date_of_birth: formattedDate,
             });
-
+    
             console.log("Save changes success:", response.data);
+             // Hiển thị toast thông báo thành công
+             toast.success('Thông tin đã được cập nhật thành công', {
+                position: "top-right",
+                autoClose: 3000, // Thời gian tự động đóng toast (ms)
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+            });
         } catch (error) {
             console.error("Error saving changes:", error);
+             // Hiển thị toast thông báo lỗi
+             toast.error('Đã xảy ra lỗi khi cập nhật thông tin', {
+                position: "top-right",
+                autoClose: 3000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+            });
         }
     };
+    
     const handleAddressChange = (e) => {
         const addressInput = e.target.value;
         const addressParts = addressInput.split(" ");
