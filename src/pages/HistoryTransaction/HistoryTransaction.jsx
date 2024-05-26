@@ -1,40 +1,49 @@
 import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faSearch, faBuildingColumns, faCircleInfo, faRightFromBracket } from "@fortawesome/free-solid-svg-icons";
 import Sidebar from "../../components/Siderbar/Siderbar";
 import Pagination from "../../components/Pagination/Pagination";
-import { Link } from "react-router-dom";
 
 const TranscationHistory = () => {
+    // Function to parse the date string in dd/MM/yyyy HH:mm:ss format
+    function parseDate(dateString) {
+        const [datePart, timePart] = dateString.split(' ');
+        const [day, month, year] = datePart.split('/').map(Number);
+        const [hours, minutes, seconds] = timePart.split(':').map(Number);
+        return new Date(year, month - 1, day, hours, minutes, seconds);
+    }
+
     function formatDate(dateString) {
-        const date = new Date(dateString);
+        const date = parseDate(dateString);
         const day = date.getDate();
         const month = date.getMonth() + 1;
         const year = date.getFullYear();
         return `${day}/${month}/${year}`;
     }
-    let index = 1;
 
-    // Hàm để format số tiền và số dư
+    function formatTime(dateString) {
+        const date = parseDate(dateString);
+        return date.toLocaleTimeString();
+    }
+
+    // Function to format currency
     function formatCurrency(value) {
         const roundedValue = Math.round(parseFloat(value) * 100) / 100;
         return roundedValue.toLocaleString('vi-VN', { style: 'currency', currency: 'VND', minimumFractionDigits: 0, maximumFractionDigits: 0 });
     }
 
-    // Sử dụng useParams để lấy userId từ URL
+    // Use useParams to get userId from URL
     const { userId } = useParams();
 
-    // Tạo state để lưu trữ dữ liệu lịch sử giao dịch
+    // State to store transaction history data
     const [transactionHistory, setTransactionHistory] = useState([]);
 
-    // Tạo state cho ngày bắt đầu và ngày kết thúc
+    // State for start date and end date
     const [startDate, setStartDate] = useState('');
     const [endDate, setEndDate] = useState('');
 
-    // Lọc dữ liệu dựa theo ngày bắt đầu và ngày kết thúc
+    // Filter data based on start date and end date
     const filteredTransactionHistory = transactionHistory.filter((item) => {
-        const tranDate = new Date(item.tran_time);
+        const tranDate = parseDate(item.tran_time);
         const start = startDate ? new Date(startDate) : null;
         const end = endDate ? new Date(endDate) : null;
         if (start && tranDate < start) {
@@ -47,7 +56,7 @@ const TranscationHistory = () => {
     });
 
     useEffect(() => {
-        // Gọi API để lấy dữ liệu lịch sử giao dịch khi component được render
+        // Fetch transaction history data when component is rendered
         fetch(`https://c2se-14-sts-api.onrender.com/api/transaction-history/${userId}`)
             .then(response => response.json())
             .then(data => {
@@ -74,7 +83,7 @@ const TranscationHistory = () => {
                             </div>
                         </div>
 
-                        {/* Thêm bộ lọc dựa theo ngày bắt đầu và ngày kết thúc */}
+                        {/* Filter based on start date and end date */}
                         <div className="w-auto mx-4 h-full text-left bg-white rounded-lg shadow-lg py-14">
                             <div className="flex mb-4">
                                 <div className="mr-4">
@@ -106,22 +115,20 @@ const TranscationHistory = () => {
                                     <th className="py-2 px-3 border-t text-black border-gray-300 bg-white">Thời gian</th>
                                     <th className="py-2 px-3 border-t text-black border-gray-300 bg-white">Số tiền</th>
                                     <th className="py-2 px-3 border-t text-black border-gray-300 bg-white">Số dư</th>
-
                                 </tr>
                                 </thead>
                                 <tbody>
-                                {/* Hiển thị dữ liệu đã lọc */}
+                                {/* Display filtered data */}
                                 {filteredTransactionHistory.map((item, index) => (
                                     <tr key={index} className="text-gray-500">
                                         <td className="py-2 px-4 border-t border-gray-300 bg-white">{index + 1}</td>
                                         <td className="py-2 px-4 border-t border-gray-300 bg-white">{item.full_name}</td>
                                         <td className="py-2 px-4 border-t border-gray-300 bg-white">{formatDate(item.tran_time)}</td>
-                                        <td className="py-2 px-4 border-t border-gray-300 bg-white">{new Date(item.tran_time).toLocaleTimeString()}</td>
+                                        <td className="py-2 px-4 border-t border-gray-300 bg-white">{formatTime(item.tran_time)}</td>
                                         <td className={`py-2 px-4 border-t border-gray-300 bg-white ${parseFloat(item.amount) >= 10000 ? 'text-green-600' : 'text-red-600'}`}>{formatCurrency(item.amount)}</td>
                                         <td className="py-2 px-4 border-t border-gray-300 bg-white">{formatCurrency(item.wallet)}</td>
                                     </tr>
                                 ))}
-
                                 </tbody>
                             </table>
                         </div>
