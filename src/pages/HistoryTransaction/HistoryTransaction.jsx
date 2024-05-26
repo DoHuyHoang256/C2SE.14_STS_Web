@@ -14,6 +14,7 @@ const TranscationHistory = () => {
         const year = date.getFullYear();
         return `${day}/${month}/${year}`;
     }
+    let index = 1;
 
     // Hàm để format số tiền và số dư
     function formatCurrency(value) {
@@ -99,26 +100,28 @@ const TranscationHistory = () => {
                             <table className="min-w-full border-collapse w-full">
                                 <thead>
                                 <tr className="text-gray-500">
+                                    <th className="py-2 px-3 border-t text-black border-gray-300 bg-white">STT</th>
                                     <th className="py-2 px-3 border-t text-black border-gray-300 bg-white">Họ và tên</th>
                                     <th className="py-2 px-3 border-t text-black border-gray-300 bg-white">Ngày giao dịch</th>
                                     <th className="py-2 px-3 border-t text-black border-gray-300 bg-white">Thời gian</th>
                                     <th className="py-2 px-3 border-t text-black border-gray-300 bg-white">Số tiền</th>
                                     <th className="py-2 px-3 border-t text-black border-gray-300 bg-white">Số dư</th>
-                                    <th className="py-2 px-3 border-t text-black border-gray-300 bg-white">Cơ sở</th>
+
                                 </tr>
                                 </thead>
                                 <tbody>
                                 {/* Hiển thị dữ liệu đã lọc */}
                                 {filteredTransactionHistory.map((item, index) => (
                                     <tr key={index} className="text-gray-500">
+                                        <td className="py-2 px-4 border-t border-gray-300 bg-white">{index + 1}</td>
                                         <td className="py-2 px-4 border-t border-gray-300 bg-white">{item.full_name}</td>
                                         <td className="py-2 px-4 border-t border-gray-300 bg-white">{formatDate(item.tran_time)}</td>
                                         <td className="py-2 px-4 border-t border-gray-300 bg-white">{new Date(item.tran_time).toLocaleTimeString()}</td>
-                                        <td className="py-2 px-4 border-t text-red-600 border-gray-300 bg-white"> {formatCurrency(item.amount)}</td>
+                                        <td className={`py-2 px-4 border-t border-gray-300 bg-white ${parseFloat(item.amount) >= 10000 ? 'text-green-600' : 'text-red-600'}`}>{formatCurrency(item.amount)}</td>
                                         <td className="py-2 px-4 border-t border-gray-300 bg-white">{formatCurrency(item.wallet)}</td>
-                                        <td className="py-2 px-4 border-t border-gray-300 bg-white">{item.location}</td>
                                     </tr>
                                 ))}
+
                                 </tbody>
                             </table>
                         </div>

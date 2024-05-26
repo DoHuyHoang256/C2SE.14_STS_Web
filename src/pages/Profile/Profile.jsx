@@ -156,14 +156,14 @@ const UserProfile = () => {
                                     placeholder="Biển số"
                                     className="input w-4/5 p-3 mb-4 rounded-md shadow-md border border-gray-300"
                                 />
-                                <input
-                                    type="text"
-                                    name="country"
-                                    value={userData.country}
-                                    onChange={handleChange}
-                                    placeholder="Cơ sở"
-                                    className="input w-4/5 p-3 mb-4 rounded-md shadow-md border border-gray-300"
-                                />
+                                {/*<input*/}
+                                {/*    type="text"*/}
+                                {/*    name="country"*/}
+                                {/*    value={userData.country}*/}
+                                {/*    onChange={handleChange}*/}
+                                {/*    placeholder="Cơ sở"*/}
+                                {/*    className="input w-4/5 p-3 mb-4 rounded-md shadow-md border border-gray-300"*/}
+                                {/*/>*/}
                             </div>
                         </div>
                         <button
