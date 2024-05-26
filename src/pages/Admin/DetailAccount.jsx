@@ -18,7 +18,7 @@ const DetailUserAccount = () => {
     const [roles, setRoles] = useState([]);
     const [genders, setGenders] = useState([]);
     const [editedDateOfBirth, setEditedDateOfBirth] = useState(null);
-    const [selectedRoleId, setSelectedRoleId] = useSdtate('');
+    const [selectedRoleId, setSelectedRoleId] = useState('');
     const [selectedGenderId, setSelectedGenderId] = useState('');
     const [editedUser, setEditedUser] = useState({
         email: '',

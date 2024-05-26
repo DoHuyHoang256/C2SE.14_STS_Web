@@ -57,8 +57,7 @@ const Login = () => {
                 Đăng Nhập
               </h1>
               <h1 className=" text-2xl  mt-12 font-normal">
-                Chào mừng đến với Smart Tracking System hệ thống quản lý bãi
-                xe của trường đại học Duy Tân
+                Chào mừng đến với Smart Tracking System
               </h1>
               <div className="mt-9">
                 <GoogleLogin
