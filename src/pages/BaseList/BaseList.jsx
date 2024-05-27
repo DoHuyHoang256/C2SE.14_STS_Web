@@ -193,12 +193,12 @@ const BaseList = () => {
         <div className="bg-white w-full h-full px-8 relative">
             {isOverlayVisible && <div className="fixed inset-0 bg-black opacity-50 z-50"></div>}
             <div className="grid w-full grid-cols-12 gap-10">
-                <div className="w-[290px] col-span-2 mb-4">
+                <div className="w-[290px] col-span-2 mt-3">
                     <div className="border border-white">
                         <Sidebar />
                     </div>
                 </div>
-                <div className="col-span-10 ml-4 w-full p-4 bg-[#F3F7FA] mb-2 flex flex-col justify-between relative">
+                <div className="col-span-10 ml-8 w-full p-4 bg-[#F3F7FA] mb-2 flex flex-col justify-between relative">
                     <div className="items-start ml-2 bg-white w-full h-full p-4">
                         <div className="flex items-center mb-8">
                             <h1 className="text-2xl font-bold">Danh Sách Cơ Sở </h1>
@@ -288,22 +288,22 @@ const BaseList = () => {
             </div>
             {showModal && (
                 <div className="fixed z-50 inset-0 overflow-y-auto flex items-center justify-center">
-                    <div className="bg-white w-[550px] p-8">
+                    <div className="bg-white w-[550px] p-8 rounded-lg shadow-lg">
                         <h2 className="text-xl font-bold mb-4">Cơ sở mới</h2>
                         <div className="mb-4">
                             <label className="block text-gray-700 text-sm font-bold mb-2">*Tên Cơ Sở:</label>
                             <input
-                                className="input"
+                                className="input border border-gray-300 rounded-md px-4 py-2 w-full focus:outline-none focus:border-blue-500"
                                 type="text"
                                 name="name"
                                 value={newLocationInfo.name}
                                 onChange={handleNewLocationInfoChange}
                             />
                         </div>
-                        <div>
+                        <div className="mb-4">
                             <label className="block text-gray-700 text-sm font-bold mb-2 mt-4">Ghi Chú:</label>
                             <input
-                                className="input"
+                                className="input border border-gray-300 rounded-md px-4 py-2 w-full focus:outline-none focus:border-blue-500"
                                 type="text"
                                 value={newLocationInfo.note}
                                 name="note"
@@ -313,7 +313,7 @@ const BaseList = () => {
                         <div className="mb-4">
                             <label className="block text-gray-700 text-sm font-bold mb-2">*Tài Khoản:</label>
                             <select
-                                className="input"
+                                className="input border border-gray-300 rounded-md px-4 py-2 w-full focus:outline-none focus:border-blue-500"
                                 name="account"
                                 value={newLocationInfo.account}
                                 onChange={handleNewLocationInfoChange}
@@ -331,7 +331,7 @@ const BaseList = () => {
                         <div className="mb-4">
                             <label className="block text-gray-700 text-sm font-bold mb-2">*Chi Phí:</label>
                             <input
-                                className="input"
+                                className="input border border-gray-300 rounded-md px-4 py-2 w-full focus:outline-none focus:border-blue-500"
                                 type="number"
                                 name="cost"
                                 value={newLocationInfo.cost}
@@ -343,7 +343,7 @@ const BaseList = () => {
                                 className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded mr-2"
                                 onClick={handleSaveNewLocation}
                             >
-                                Lưu
+                                Thêm
                             </button>
                             <button
                                 className="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded"
@@ -354,6 +354,7 @@ const BaseList = () => {
                         </div>
                     </div>
                 </div>
+
             )}
         </div>
     );

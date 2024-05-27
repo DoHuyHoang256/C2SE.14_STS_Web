@@ -114,7 +114,7 @@ const TranscationHistory = () => {
                                     <th className="py-2 px-3 border-t text-black border-gray-300 bg-white">Ngày giao dịch</th>
                                     <th className="py-2 px-3 border-t text-black border-gray-300 bg-white">Thời gian</th>
                                     <th className="py-2 px-3 border-t text-black border-gray-300 bg-white">Số tiền</th>
-                                    <th className="py-2 px-3 border-t text-black border-gray-300 bg-white">Số dư</th>
+                                    {/*<th className="py-2 px-3 border-t text-black border-gray-300 bg-white">Số dư</th>*/}
                                 </tr>
                                 </thead>
                                 <tbody>
@@ -126,7 +126,7 @@ const TranscationHistory = () => {
                                         <td className="py-2 px-4 border-t border-gray-300 bg-white">{formatDate(item.tran_time)}</td>
                                         <td className="py-2 px-4 border-t border-gray-300 bg-white">{formatTime(item.tran_time)}</td>
                                         <td className={`py-2 px-4 border-t border-gray-300 bg-white ${parseFloat(item.amount) >= 10000 ? 'text-green-600' : 'text-red-600'}`}>{formatCurrency(item.amount)}</td>
-                                        <td className="py-2 px-4 border-t border-gray-300 bg-white">{formatCurrency(item.wallet)}</td>
+                                        {/*<td className="py-2 px-4 border-t border-gray-300 bg-white">{formatCurrency(item.wallet)}</td>*/}
                                     </tr>
                                 ))}
                                 </tbody>

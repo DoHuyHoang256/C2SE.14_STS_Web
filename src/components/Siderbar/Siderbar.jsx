@@ -9,8 +9,8 @@ import {
     faChevronDown,
     faRightFromBracket,
 } from "@fortawesome/free-solid-svg-icons";
-import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+// import { ToastContainer, toast } from 'react-toastify';
+// import 'react-toastify/dist/ReactToastify.css';
 const Sidebar = () => {
     const [dropdownStates, setDropdownStates] = useState({
         userDropdown: false,
@@ -26,16 +26,16 @@ const Sidebar = () => {
     };
 
     const router = useLocation();
-    const handleLogout = () => {
-        // Đặt logic đăng xuất ở đây, ví dụ:
-        // Xóa token, xóa thông tin người dùng đăng nhập, vv.
-
-        // Hiển thị thông báo toast
-        toast.success("Bạn đã đăng xuất thành công!");
-
-        // Load lại trang
-        window.location.reload();
-    };
+    // const handleLogout = () => {
+    //     // Đặt logic đăng xuất ở đây, ví dụ:
+    //     // Xóa token, xóa thông tin người dùng đăng nhập, vv.
+    //
+    //     // Hiển thị thông báo toast
+    //     toast.success("Tài khoản của bạn đã được đăng xuất thành công!");
+    //
+    //     // Load lại trang
+    //     window.location.reload();
+    // };
     return (
         <aside
             id="sidebar-multi-level-sidebar"
@@ -54,22 +54,22 @@ const Sidebar = () => {
                         />
                     </div>
                     <div>
-                        <p className="font-medium p-3">Nguyen Phi Hien</p>
-                        <p className="text-sm text-gray-500 p-2">Admin</p>
+                        <p className="font-medium  text-2xl p-3">Admin</p>
+                        {/*<p className="text-sm text-gray-500 p-2">Admin</p>*/}
                     </div>
                 </div>
                 <ul className="space-y-4 font-medium p-4">
-                    <li>
-                        <button
-                            className="flex items-center justify-start w-full p-2 text-base text-gray-900 transition duration-75 rounded-lg group hover:bg-gray-100"
-                            onClick={() => toggleDropdown("userDropdown")}
-                        >
-                            <Link to="/profile">
-                                <FontAwesomeIcon icon={faUser} className="text-xl " /> <span className="ml-3 mb-2 text-left whitespace-nowrap">Tài khoản của tôi</span>
+                    {/*<li>*/}
+                    {/*    <button*/}
+                    {/*        className="flex items-center justify-start w-full p-2 text-base text-gray-900 transition duration-75 rounded-lg group hover:bg-gray-100"*/}
+                    {/*        onClick={() => toggleDropdown("userDropdown")}*/}
+                    {/*    >*/}
+                    {/*        <Link to="/profile">*/}
+                    {/*            <FontAwesomeIcon icon={faUser} className="text-xl " /> <span className="ml-3 mb-2 text-left whitespace-nowrap">Tài khoản của tôi</span>*/}
 
-                            </Link>
-                        </button>
-                    </li>
+                    {/*        </Link>*/}
+                    {/*    </button>*/}
+                    {/*</li>*/}
 
 
 
@@ -109,7 +109,8 @@ const Sidebar = () => {
                         <ul className={`${dropdownStates.accountDropdown || router.pathname.includes("/account") ? "block" : "hidden"}`}>
 
                             <li>
-                                <Link to="/admin/manager-account" className={`${router.pathname.includes("/admin/manager-account") ? "text-primaryColor" : "text-gray-500"} text-gray-500 flex items-center w-full p-2 transition duration-75 rounded-lg pl-11 group hover:bg-gray-100`}>
+                                <Link to="/admin/manager-account" className={`${router.pathname.includes("/admin/manager-account") ? "text-primaryColor" : "text-gray-500"} text-gray-500 flex items-center w-full p-2 transition duration-75 rounded-lg pl-11 group hover
+                                bg-gray-100`}>
                                     Danh Sách Tài Khoản
                                 </Link>
                             </li>
@@ -122,16 +123,20 @@ const Sidebar = () => {
                     </li>
 
                     <li>
+
                         <button className="flex items-center w-full p-2 text-base text-gray-900 transition duration-75 rounded-lg group hover:bg-gray-100"
+                                // onClick={handleLogout}  // Call handleLogout function on click
                         >
-                            <Link to="/login" >
-                                <FontAwesomeIcon icon={faRightFromBracket} />
-                                <span className="flex-1 ml-3 text-left whitespace-nowrap">Đăng xuất</span>
-                            </Link>
+                            <Link to="/login">
+                            <FontAwesomeIcon icon={faRightFromBracket} />
+                            <span className="flex-1 ml-3 text-left whitespace-nowrap">Đăng xuất</span>
+                        </Link>
+
                         </button>
                     </li>
                 </ul>
             </div>
+            {/*<ToastContainer />*/}
         </aside>
     );
 };

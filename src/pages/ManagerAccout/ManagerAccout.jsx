@@ -157,24 +157,24 @@ const ManageUserAccount = () => {
         const selectedRoleId = e.target.value;
         setSelectedRoleId(selectedRoleId);
     };
-    
+
     const handleGenderChange = (e) => {
         const selectedGenderId = e.target.value;
         setSelectedGenderId(selectedGenderId);
     };
-    
+
 
     return (
-        <div className="bg-[#F3F7FA] w-full h-full p-8">
+        <div className="bg-[#F3F7FA] w-full h-full p-3">
             <ToastContainer />
-        <div className="bg-[#F3F7FA] w-full h-full p-8">
+        <div className="bg-[#F3F7FA] w-full h-full ">
             <div className="grid grid-cols-12 gap-10">
-                <div className="col-span-2 w-[290px] h-max">
+                <div className="col-span-2 w-[290px] h-full">
                     <div className="border border-white">
                         <Sidebar />
                     </div>
                 </div>
-                <div className=" ml-24 col-span-10">
+                <div className=" ml-20 w-[1120px] h-full col-span-10">
                     {showAddAccountPage ? (
                         <div className="bg-white p-8 rounded-lg w-[700px] shadow-lg relative">
                             <h2 className="text-lg font-semibold mb-4">Thêm tài khoản mới</h2>
@@ -254,7 +254,7 @@ const ManageUserAccount = () => {
                                 onClick={handleSaveNewAccount}
                                 className="py-2 px-4 bg-green-500 hover:bg-green-700 text-white rounded mr-2"
                             >
-                                Lưu
+                                Thêm tài khoản
                             </button>
                             <button
                                 onClick={() => setShowAddAccountPage(false)}
@@ -266,76 +266,74 @@ const ManageUserAccount = () => {
                         </div>
                     ) :(
 
-                    <div className="bg-[#ffff] border border-white p-2 rounded-lg">
-                            <div className="mx-auto border border-white p-2">
-                                <div className="App p-2 flex items-center justify-between">
-                                    <div style={{ textAlign: "left" }}>
-                                        <h1>Danh sách người dùng</h1>
-                                        <i className="text-green-700 py-4" style={{ width: "20%" }}>Active Members</i>
+                        <div className="mx-auto p-1">
+                            <div className="bg-white p-4 rounded-lg shadow-lg">
+                                <div className="flex items-center justify-between mb-4">
+                                    <div className="text-left">
+                                        <h1 className="text-xl font-semibold">Danh sách người dùng</h1>
+                                        <span className="text-green-700">Active Members</span>
                                     </div>
-                                    <div className="search-box flex bg-[#F9FAFB] w-[500px] h-[45px] border border-black rounded-s-2xl px-4">
-                                        <input
-                                            className="search-input w-9/12 font-bold outline-none bg-transparent pl-2"
-                                            type="text"
-                                            placeholder="Tìm kiếm theo họ và tên hoặc tên người dùng..."
-                                            value={searchTerm}
-                                            onChange={handleSearch}
-                                        />
-                                    </div>
-                                    <div className="bg-[#212143] border border-black rounded-e-2xl">
-                                        <button className="search-button text-lg p-1 w-[120px] h-[45px] text-white ml-2 ">
-                                            <FontAwesomeIcon icon={faSearch} /> Tìm kiếm
+                                    <div className="flex items-center w-full max-w-3xl">
+                                        <div className="flex bg-[#F9FAFB] border border-gray-300 rounded-l-lg flex-grow">
+                                            <input
+                                                className="w-full px-4 py-2 font-bold outline-none bg-transparent"
+                                                type="text"
+                                                placeholder="Tìm kiếm theo họ và tên hoặc tên người dùng..."
+                                                value={searchTerm}
+                                                onChange={handleSearch}
+                                            />
+                                        </div>
+                                        <button className="px-4 py-2 bg-[#212143] text-white rounded-r-lg border border-gray-300 flex items-center">
+                                            <FontAwesomeIcon icon={faSearch} className="mr-2" /> Tìm kiếm
                                         </button>
-                                    </div>
-                                    <div className="bg-[#212143] border mx-2 border-black rounded ">
-                                        <button className="search-button p-1 text-lg w-[180px] h-[45px] text-white"
-                                                onClick={handleAddAccountClick}>
-                                            <FontAwesomeIcon icon={faAddressBook} className="mx-1" /> Thêm tài khoản
+                                        <button
+                                            className="ml-4 px-4 py-2 bg-[#212143] text-white rounded-lg border border-gray-300 flex items-center"
+                                            onClick={handleAddAccountClick}
+                                        >
+                                            <FontAwesomeIcon icon={faAddressBook} className="mr-2" /> Thêm tài khoản
                                         </button>
                                     </div>
                                 </div>
-                            </div>
-                            <div className="w-auto mx-4 h-full text-left bg-white rounded-lg shadow-lg py-10">
-                                <table className="min-w-full border-collapse w-full">
-                                    <thead>
-                                    <tr className="text-gray-500">
-                                        <th className="py-2 px-3 border-t text-black border-gray-300 bg-white">STT</th>
-                                        <th className="py-2 px-3 border-t text-black border-gray-300 bg-white">Họ và tên</th>
-                                        <th className="py-2 px-3 border-t text-black border-gray-300 bg-white">Email</th>
-                                        <th className="py-2 px-3 border-t text-black border-gray-300 bg-white">Vai trò</th>
-                                        <th className="py-2 px-3 border-t text-black border-gray-300 bg-white">Số dư</th>
-                                        <th className="py-2 px-3 border-t text-black border-gray-300 bg-white">Tổng giao dịch</th>
-                                    </tr>
-                                    </thead>
-                                    <tbody>
-                                    {filteredUsers.map((user, index) => (
-                                        <tr key={index} className="text-gray-500">
-                                            <td className="py-2 px-3 border-t text-black border-gray-300 bg-white">{index + 1}</td>
-                                            <td className="py-2 px-3 text-blue-600  bg-white border-b border-gray-300">
-                                                <Link className="" to={`/admin/detail-account/${user.user_id}`}>
-                                                    {user.full_name}
-                                                </Link>
-                                            </td>
-
-                                            <td className="py-2 px-3 border-t text-gray-900 border-gray-300 bg-white">{user.email}</td>
-                                            <td className="py-2 px-3 border-t text-gray-900 border-gray-300 bg-white">{user.role_name}</td>
-                                            <td className="py-2 px-3 border-t text-gray-900 border-gray-300 bg-white">
-                                                {formatCurrency(user.wallet.toLocaleString('vi-VN'))}
-                                            </td>
-                                            <td className="py-2 px-14 text-red-500 text-2xl border-t border-gray-300 bg-white">
-                                                <Link to={`/transaction-history/${user.user_id}`}>
-                                                    <FontAwesomeIcon icon={faBuildingColumns} />
-                                                </Link>
-                                            </td>
+                                <div className="overflow-x-auto">
+                                    <table className="min-w-full border-collapse">
+                                        <thead>
+                                        <tr className="bg-gray-200 text-gray-700">
+                                            <th className="py-2 px-4 border text-left">STT</th>
+                                            <th className="py-2 px-4 border text-left">Họ và tên</th>
+                                            <th className="py-2 px-4 border text-left">Email</th>
+                                            <th className="py-2 px-4 border text-left">Vai trò</th>
+                                            <th className="py-2 px-4 border text-left">Số dư</th>
+                                            <th className="py-2 px-4 border text-left">Lịch sử giao dịch</th>
                                         </tr>
-                                    ))}
-                                    </tbody>
-                                </table>
-                            </div>
-                            <div className="border border-white py-8">
-                                <Pagination currentPage={currentPage} onPageChange={handlePageChange} />
+                                        </thead>
+                                        <tbody>
+                                        {filteredUsers.map((user, index) => (
+                                            <tr key={index} className="hover:bg-gray-100">
+                                                <td className="py-2 px-4 border text-left">{index + 1}</td>
+                                                <td className="py-2 px-4 border text-left text-blue-600">
+                                                    <Link to={`/admin/detail-account/${user.user_id}`}>
+                                                        {user.full_name}
+                                                    </Link>
+                                                </td>
+                                                <td className="py-2 px-4 border text-left">{user.email}</td>
+                                                <td className="py-2 px-4 border text-left">{user.role_name}</td>
+                                                <td className="py-2 px-4 border text-left">{formatCurrency(user.wallet)}</td>
+                                                <td className="py-2 px-4 border text-left text-center">
+                                                    <Link to={`/transaction-history/${user.user_id}`} className="text-red-500 text-xl">
+                                                        <FontAwesomeIcon icon={faBuildingColumns} />
+                                                    </Link>
+                                                </td>
+                                            </tr>
+                                        ))}
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <div className="mt-4">
+                                    <Pagination currentPage={currentPage} onPageChange={handlePageChange} />
+                                </div>
                             </div>
                         </div>
+
                     )}
                 </div>
             </div>
