@@ -7,7 +7,7 @@ import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import axios from 'axios';
 import { Link } from "react-router-dom";
-import { format } from "date-fns";
+import { format, parseISO, addHours } from "date-fns";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import Sidebar from "../../components/Siderbar/Siderbar";
@@ -203,16 +203,21 @@ const RevenueUpdate = () => {
     };
 
     const formatDate = (isoDate) => {
-        const date = new Date(isoDate);
-        return format(date, 'dd-MM-yyyy');
+        const date = parseISO(isoDate); // Parse the ISO date
+        const localDate = addHours(date, date.getTimezoneOffset() / 60); // Adjust to local timezone
+        return format(localDate, 'dd-MM-yyyy');
     };
+
     const formatAmount = (amount) => {
         return new Intl.NumberFormat('vi-VN').format(amount);
     };
 
     const formatTime = (isoTime) => {
-        return isoTime.split('T')[1].substring(0, 8);
+        const date = parseISO(isoTime); // Parse the ISO time
+        const localTime = addHours(date, date.getTimezoneOffset() / 60); // Adjust to local timezone
+        return format(localTime, 'HH:mm:ss');
     };
+
     const sortedTransactions = [...transactions].sort((a, b) => new Date(b.tran_time) - new Date(a.tran_time));
 
     useEffect(() => {
@@ -225,11 +230,11 @@ const RevenueUpdate = () => {
 
     return (
         <div className="grid grid-cols-12 gap-10 p-4 ">
-                <div className="ml-4 col-span-2 w-[290px] h-full">
-                    <div className="border border-white">
-                        <Sidebar />
-                    </div>
+            <div className="ml-4 col-span-2 w-[290px] h-full">
+                <div className="border border-white">
+                    <Sidebar />
                 </div>
+            </div>
             <div className="col-span-10 ml-20 p-8 bg-white rounded-lg shadow-lg flex flex-col">
                 <div className="flex items-center mb-2">
                     <ToastContainer position="top-right" />
@@ -375,4 +380,3 @@ const RevenueUpdate = () => {
 };
 
 export default RevenueUpdate;
-
