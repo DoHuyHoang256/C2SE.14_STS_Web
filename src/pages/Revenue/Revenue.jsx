@@ -81,7 +81,7 @@ const RevenueUpdate = () => {
     useEffect(() => {
         const fetchTransactions = async () => {
             try {
-                const response = await axios.get('https://c2se-14-sts-api.onrender.com/api/transaction-summary?startDate=2024-04-01&endDate=2024-05-28');
+                const response = await axios.get('https://c2se-14-sts-api.onrender.com/api/transaction-summary');
                 setTransactions(response.data);
             } catch (error) {
                 console.error('Error fetching transactions:', error);
