@@ -8,7 +8,7 @@ import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import Sidebar from "../../components/Siderbar/Siderbar";
 import { format } from 'date-fns';
-import { toast } from 'react-toastify';
+import {toast, ToastContainer} from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 const DetailUserAccount = () => {
@@ -94,13 +94,11 @@ const DetailUserAccount = () => {
         const selectedRoleId = e.target.value;
         setSelectedRoleId(selectedRoleId);
     };
-    
 
     const handleGenderChange = (e) => {
         const selectedGenderId = e.target.value;
         setSelectedGenderId(selectedGenderId);
     };
-    
 
     const handleDateOfBirthChange = (date) => {
         setEditedDateOfBirth(date);
@@ -119,33 +117,17 @@ const DetailUserAccount = () => {
                 role: selectedRoleId,
                 date_of_birth: formattedDate,
             });
-    
+
             console.log("Save changes success:", response.data);
-             // Hiển thị toast thông báo thành công
-             toast.success('Thông tin đã được cập nhật thành công', {
-                position: "top-right",
-                autoClose: 3000, // Thời gian tự động đóng toast (ms)
-                hideProgressBar: false,
-                closeOnClick: true,
-                pauseOnHover: true,
-                draggable: true,
-                progress: undefined,
-            });
+            // Hiển thị toast thông báo thành công
+            toast.success('Thông tin đã được cập nhật thành công');
         } catch (error) {
             console.error("Error saving changes:", error);
-             // Hiển thị toast thông báo lỗi
-             toast.error('Đã xảy ra lỗi khi cập nhật thông tin', {
-                position: "top-right",
-                autoClose: 3000,
-                hideProgressBar: false,
-                closeOnClick: true,
-                pauseOnHover: true,
-                draggable: true,
-                progress: undefined,
-            });
+            // Hiển thị toast thông báo lỗi
+            toast.error('Đã xảy ra lỗi khi cập nhật thông tin');
         }
     };
-    
+
     const handleAddressChange = (e) => {
         const addressInput = e.target.value;
         const addressParts = addressInput.split(" ");
@@ -163,8 +145,6 @@ const DetailUserAccount = () => {
             address: rearrangedAddress,
         }));
     };
-
-
 
     if (loading) {
         return <Spinner color="blue" />;
@@ -199,7 +179,7 @@ const DetailUserAccount = () => {
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 p-4">
-                    <div className="col-span-1 w-[300px]">
+                    <div className="col-span-1  w-[350px] ">
                         <div className="mb-4">
                             <label className="block  font-bold text-gray-700 mb-2">Họ và tên:</label>
                             <input
@@ -227,7 +207,7 @@ const DetailUserAccount = () => {
                                 selected={editedDateOfBirth}
                                 onChange={handleDateOfBirthChange}
                                 dateFormat="dd/MM/yyyy"
-                                className="w-[300px] p-2 border rounded mb-2"
+                                className=" w-[350px] p-2 border rounded mb-2"
                             />
                         </div>
 
@@ -244,7 +224,7 @@ const DetailUserAccount = () => {
 
                     </div>
 
-                    <div className="col-span-1 w-[400px]">
+                    <div className="col-span-1 w-[350px] ">
                         <div className="mb-4">
                             <label className="block  font-bold text-gray-700 mb-2">Số điện thoại:</label>
                             <input
@@ -296,17 +276,18 @@ const DetailUserAccount = () => {
                     </div>
                 </div>
 
-                <div className="mt-4 flex justify-end space-x-2">
-                    <button className="py-2 px-4 bg-red-500 hover:bg-red-700 text-white rounded" onClick={() => console.log('Khóa tài khoản')}>
-                        Khóa tài khoản
-                    </button>
+                <div className="mt-4 flex  font-bold justify-end space-x-2">
+                    {/*<button className="py-2 px-4 bg-red-500 hover:bg-red-700 text-white rounded" onClick={() => console.log('Khóa tài khoản')}>*/}
+                    {/*    Khóa tài khoản*/}
+                    {/*</button>*/}
                     <button
                         className="py-2 px-4 bg-green-500 hover:bg-green-700 text-white rounded"
                         onClick={handleSaveChanges}
                     >
-                        Lưu thay đổi
+                        Cập Nhật Tài Khoản
                     </button>
                 </div>
+                <ToastContainer />
             </div>
         </div>
     );
