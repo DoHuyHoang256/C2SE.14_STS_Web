@@ -3,7 +3,7 @@ import { useParams } from "react-router-dom";
 import Sidebar from "../../components/Siderbar/Siderbar";
 import Pagination from "../../components/Pagination/Pagination";
 
-const TranscationHistory = () => {
+const TransactionHistory = () => {
     // Function to parse the date string in dd/MM/yyyy HH:mm:ss format
     function parseDate(dateString) {
         const [datePart, timePart] = dateString.split(' ');
@@ -13,7 +13,7 @@ const TranscationHistory = () => {
     }
 
     function formatDate(dateString) {
-        const date = parseDate(dateString);
+        const date = new Date(dateString);
         const day = date.getDate();
         const month = date.getMonth() + 1;
         const year = date.getFullYear();
@@ -21,9 +21,13 @@ const TranscationHistory = () => {
     }
 
     function formatTime(dateString) {
-        const date = parseDate(dateString);
-        return date.toLocaleTimeString();
+        const date = new Date(dateString);
+        const hours = date.getHours().toString().padStart(2, '0');
+        const minutes = date.getMinutes().toString().padStart(2, '0');
+        const seconds = date.getSeconds().toString().padStart(2, '0');
+        return `${hours}:${minutes}:${seconds}`;
     }
+
 
     // Function to format currency
     function formatCurrency(value) {
@@ -31,17 +35,14 @@ const TranscationHistory = () => {
         return roundedValue.toLocaleString('vi-VN', { style: 'currency', currency: 'VND', minimumFractionDigits: 0, maximumFractionDigits: 0 });
     }
 
-    // Use useParams to get userId from URL
     const { userId } = useParams();
 
-    // State to store transaction history data
     const [transactionHistory, setTransactionHistory] = useState([]);
-
-    // State for start date and end date
     const [startDate, setStartDate] = useState('');
     const [endDate, setEndDate] = useState('');
+    const [currentPage, setCurrentPage] = useState(1);
+    const itemsPerPage = 11;
 
-    // Filter data based on start date and end date
     const filteredTransactionHistory = transactionHistory.filter((item) => {
         const tranDate = parseDate(item.tran_time);
         const start = startDate ? new Date(startDate) : null;
@@ -55,15 +56,23 @@ const TranscationHistory = () => {
         return true;
     });
 
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    const endIndex = startIndex + itemsPerPage;
+    const itemsToShow = filteredTransactionHistory.slice(startIndex, endIndex);
+
     useEffect(() => {
-        // Fetch transaction history data when component is rendered
         fetch(`https://c2se-14-sts-api.onrender.com/api/transaction-history/${userId}`)
             .then(response => response.json())
             .then(data => {
                 setTransactionHistory(data);
             })
             .catch(error => console.error('Error fetching transaction history:', error));
-    }, [userId]);
+    }, [userId, startDate, endDate]); // Thêm startDate và endDate vào mảng dependencies
+
+
+    const handlePageChange = (pageNumber) => {
+        setCurrentPage(pageNumber);
+    };
 
     return (
         <div className="bg-[#F3F7FA] w-full h-full p-8">
@@ -83,7 +92,6 @@ const TranscationHistory = () => {
                             </div>
                         </div>
 
-                        {/* Filter based on start date and end date */}
                         <div className="w-auto mx-4 h-full text-left bg-white rounded-lg shadow-lg py-14">
                             <div className="flex mb-4">
                                 <div className="mr-4">
@@ -114,26 +122,28 @@ const TranscationHistory = () => {
                                     <th className="py-2 px-3 border-t text-black border-gray-300 bg-white">Ngày giao dịch</th>
                                     <th className="py-2 px-3 border-t text-black border-gray-300 bg-white">Thời gian</th>
                                     <th className="py-2 px-3 border-t text-black border-gray-300 bg-white">Số tiền</th>
-                                    {/*<th className="py-2 px-3 border-t text-black border-gray-300 bg-white">Số dư</th>*/}
                                 </tr>
                                 </thead>
                                 <tbody>
-                                {/* Display filtered data */}
-                                {filteredTransactionHistory.map((item, index) => (
+                                {itemsToShow.map((item, index) => (
                                     <tr key={index} className="text-gray-500">
-                                        <td className="py-2 px-4 border-t border-gray-300 bg-white">{index + 1}</td>
+                                        <td className="py-2 px-4 border-t border-gray-300 bg-white">{startIndex + index + 1}</td>
                                         <td className="py-2 px-4 border-t border-gray-300 bg-white">{item.full_name}</td>
                                         <td className="py-2 px-4 border-t border-gray-300 bg-white">{formatDate(item.tran_time)}</td>
                                         <td className="py-2 px-4 border-t border-gray-300 bg-white">{formatTime(item.tran_time)}</td>
                                         <td className={`py-2 px-4 border-t border-gray-300 bg-white ${parseFloat(item.amount) >= 10000 ? 'text-green-600' : 'text-red-600'}`}>{formatCurrency(item.amount)}</td>
-                                        {/*<td className="py-2 px-4 border-t border-gray-300 bg-white">{formatCurrency(item.wallet)}</td>*/}
                                     </tr>
                                 ))}
                                 </tbody>
                             </table>
                         </div>
                         <div className="border border-white py-8">
-                            <Pagination />
+                            <Pagination
+                                totalItems={filteredTransactionHistory.length}
+                                itemsPerPage={itemsPerPage}
+                                currentPage={currentPage}
+                                onPageChange={handlePageChange}
+                            />
                         </div>
                     </div>
                 </div>
@@ -142,4 +152,4 @@ const TranscationHistory = () => {
     );
 };
 
-export default TranscationHistory;
+export default TransactionHistory;
