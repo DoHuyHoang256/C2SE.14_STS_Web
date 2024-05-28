@@ -169,12 +169,13 @@ const ManageUserAccount = () => {
             <ToastContainer />
         <div className="bg-[#F3F7FA] w-full h-full ">
             <div className="grid grid-cols-12 gap-10">
-                <div className="col-span-2 w-[290px] h-full">
+                <div className="ml-6 col-span-2 w-[290px] h-full mt-4">
                     <div className="border border-white">
                         <Sidebar />
                     </div>
                 </div>
-                <div className=" ml-20 w-[1120px] h-full col-span-10">
+                <div className="col-span-10 ml-8 w-full p-4  bg-[#F3F7FA] mb-2 flex flex-col justify-between relative">
+                    <div className="items-start bg-white w-full h-full p-2">
                     {showAddAccountPage ? (
                         <div className="bg-white p-8 rounded-lg w-[700px] shadow-lg relative">
                             <h2 className="text-lg font-semibold mb-4">Thêm tài khoản mới</h2>
@@ -336,6 +337,8 @@ const ManageUserAccount = () => {
 
                     )}
                 </div>
+            </div>
+
             </div>
         </div>
         </div>

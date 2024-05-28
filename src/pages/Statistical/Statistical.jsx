@@ -162,17 +162,25 @@ const StatisticsPage = () => {
 
     const handleStartDateChange = (event) => {
         const date = new Date(event.target.value);
+        date.setDate(date.getDate() + 1);  // Increment the date by 1 day
         setStartDate(date);
     };
 
     const handleEndDateChange = (event) => {
         const selectedEndDate = new Date(event.target.value);
+        selectedEndDate.setDate(selectedEndDate.getDate() + 1);  // Increment the date by 1 day
         if (selectedEndDate < startDate) {
             console.error("Ngày kết thúc không thể nhỏ hơn ngày bắt đầu.");
             return;
         }
         setEndDate(selectedEndDate);
     };
+    useEffect(() => {
+        const newEndDate = new Date(endDate);
+        newEndDate.setDate(newEndDate.getDate() ); // Tăng ngày kết thúc lên 1 ngày
+        newEndDate.setHours(newEndDate.getHours() + 4); // Thêm 5 giờ
+        setEndDate(newEndDate);
+    }, []);
 
     const handleExport = async () => {
         if (selectedBases.length === 0 || !startDate || !endDate) {
@@ -306,13 +314,13 @@ const StatisticsPage = () => {
     };
 
     return (
-        <div className="grid grid-cols-12 gap-6 p-4">
-            <div className="col-span-2 w-[290px] h-full">
+        <div className="grid bg-[#F3F7FA] grid-cols-12 gap-6 p-2">
+            <div className=" ml-2 col-span-2 w-[290px] h-full">
                 <div className="border border-white">
                     <Sidebar />
                 </div>
             </div>
-            <div className="ml-16  w-[1120px] h-full col-span-10 shadow-md">
+            <div className="ml-16  w-[1170px] bg-white h-full col-span-10 shadow-md">
                 <div className="mb-6 mx-4 mt-4 flex  items-center justify-between bg-[#F5F5F5] p-4 rounded-lg">
                     <div className="flex flex-wrap items-center space-x-4">
                         {locations.map((location) => (
@@ -368,7 +376,7 @@ const StatisticsPage = () => {
                         </button>
                     </div>
                 </div>
-                <div className=" mx-8 w-10/12">
+                <div className=" mx-8 w-[1000px] h-11/12">
                     <canvas id="myChart" width="800" height="400"></canvas>
                 </div>
             </div>

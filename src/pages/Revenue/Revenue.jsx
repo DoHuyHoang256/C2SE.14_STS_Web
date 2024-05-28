@@ -81,7 +81,12 @@ const RevenueUpdate = () => {
     useEffect(() => {
         const fetchTransactions = async () => {
             try {
-                const response = await axios.get('https://c2se-14-sts-api.onrender.com/api/transaction-summary');
+                const response = await axios.get('https://c2se-14-sts-api.onrender.com/api/transaction-summary', {
+                    params: {
+                        startDate: startDate.toISOString().split('T')[0],
+                        endDate: endDate.toISOString().split('T')[0]
+                    }
+                });
                 setTransactions(response.data);
             } catch (error) {
                 console.error('Error fetching transactions:', error);
@@ -95,7 +100,8 @@ const RevenueUpdate = () => {
         } else {
             setSelectedBranches(branches);
         }
-    }, [branches]);
+    }, [startDate, endDate]);
+
 
     useEffect(() => {
         localStorage.setItem('selectedBranches', JSON.stringify(selectedBranches));
@@ -145,16 +151,11 @@ const RevenueUpdate = () => {
         const wb = XLSX.utils.book_new();
         const overviewData = [['Cơ sở', 'Số giao dịch', 'Tổng doanh thu']];
 
-        const cellColor = { fgColor: { rgb: 'FFFF00FF' } }; // Màu sắc của ô
-
-        const headerRow = ["Ngày", "Họ tên", "Biển số", "Cơ sở", "Thời gian giao dịch", "Số tiền"];
-        const headerCellStyle = { font: { bold: true }, fill: { fgColor: { rgb: 'FFFF00FF' } } };
-        const wsData = [headerRow.map((val) => ({ v: val, s: headerCellStyle }))];
-
         for (const dataset of revenueData.datasets) {
             const { label } = dataset;
             let totalTransactions = 0;
             let totalRevenue = 0;
+            const wsData = [];
 
             try {
                 const response = await axios.get('https://c2se-14-sts-api.onrender.com/api/transaction-summary', {
@@ -167,18 +168,21 @@ const RevenueUpdate = () => {
                 const transactions = response.data;
 
                 if (transactions.length === 0) {
-                    wsData.push([{ v: 'Không có dữ liệu', s: cellColor }]);
+                    wsData.push(["Không có dữ liệu"]);
                     overviewData.push([label, 0, 0]);
                 } else {
+                    const headerRow = ["Ngày", "Họ tên", "Biển số", "Cơ sở", "Thời gian giao dịch", "Số tiền"];
+                    wsData.push(headerRow);
+
                     transactions.forEach(transaction => {
                         if (transaction.location_name === label) {
                             const rowData = [
-                                { v: formatDate(transaction.tran_time), s: cellColor },
-                                { v: transaction.full_name, s: cellColor },
-                                { v: transaction.license_plate, s: cellColor },
-                                { v: transaction.location_name, s: cellColor },
-                                { v: formatTime(transaction.tran_time), s: cellColor },
-                                { v: transaction.amount, s: cellColor }
+                                formatDate(transaction.tran_time),
+                                transaction.full_name,
+                                transaction.license_plate,
+                                transaction.location_name,
+                                formatTime(transaction.tran_time),
+                                transaction.amount
                             ];
                             wsData.push(rowData);
                             totalTransactions++;
@@ -219,6 +223,24 @@ const RevenueUpdate = () => {
     };
 
     const sortedTransactions = [...transactions].sort((a, b) => new Date(b.tran_time) - new Date(a.tran_time));
+    // const RevenueUpdate = () => {
+    //     // Các state và mã khác ở đây...
+    //
+    //     useEffect(() => {
+    //         const newEndDate = new Date();
+    //         newEndDate.setDate(newEndDate.getDate()); // Tăng ngày kết thúc lên 1 ngày
+    //         setEndDate(newEndDate);
+    //     }, []);
+    //
+    //     // Các thành phần khác của component ở đây...
+    // };
+    useEffect(() => {
+        const newEndDate = new Date(endDate);
+        newEndDate.setDate(newEndDate.getDate() ); // Tăng ngày kết thúc lên 1 ngày
+        newEndDate.setHours(newEndDate.getHours() + 4); // Thêm 5 giờ
+        setEndDate(newEndDate);
+    }, []);
+
 
     useEffect(() => {
         if (branches.length > 0 && firstLoad) {
@@ -229,13 +251,13 @@ const RevenueUpdate = () => {
     }, [branches, firstLoad]);
 
     return (
-        <div className="grid grid-cols-12 gap-10 p-4 ">
+        <div className="grid bg-[#F3F7FA] w-full h-full px-8 relative grid-cols-12 gap-10 p-4 ">
             <div className="ml-4 col-span-2 w-[290px] h-full">
-                <div className="border border-white">
+                <div className="border h-full border-white">
                     <Sidebar />
                 </div>
             </div>
-            <div className="col-span-10 ml-20 p-8 bg-white rounded-lg shadow-lg flex flex-col">
+            <div className="col-span-10 ml-20 w-[1130px] p-8 bg-white rounded-lg shadow-lg flex flex-col">
                 <div className="flex items-center mb-2">
                     <ToastContainer position="top-right" />
                     <div className="button rounded-full text-center bg-[#F9FBFF] items-center justify-center w-[60px] h-[30px] p-1 mr-2">
@@ -264,6 +286,7 @@ const RevenueUpdate = () => {
                                     className="p-2 border rounded pl-10"
                                     maxDate={new Date()}
                                 />
+
                                 <FontAwesomeIcon icon={faCalendarAlt} className="absolute left-2 top-1/2 transform -translate-y-1/2 text-gray-800" />
                             </div>
                         </div>
@@ -282,7 +305,7 @@ const RevenueUpdate = () => {
                                     }}
                                     dateFormat="dd/MM/yyyy"
                                     className="p-2 border rounded pl-10"
-                                    maxDate={new Date()}
+                                    maxDate={new Date()+1}
                                 />
                                 <FontAwesomeIcon icon={faCalendarAlt} className="absolute left-2 top-1/2 transform -translate-y-1/2 text-gray-800" />
                             </div>
